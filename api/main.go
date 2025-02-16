@@ -8,6 +8,7 @@ import (
 	"github.com/MisterKirill/blaze/api/routes"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
 )
 
@@ -16,11 +17,16 @@ func main() {
 		log.Fatal("Failed to load .env")
 	}
 
-	db.InitDB();
+	db.InitDB()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowCredentials: true,
+	}))
 
 	routes.InitRoutes(r)
 

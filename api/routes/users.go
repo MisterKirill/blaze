@@ -2,6 +2,7 @@ package routes
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/mail"
 	"os"
@@ -63,7 +64,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub": fmt.Sprint(user.ID),
 		"iat": time.Now().Unix(),
 		"exp": time.Now().AddDate(0, 1, 0).Unix(),
 	})
@@ -199,4 +200,48 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		"stream_name":  user.StreamName,
 		"bio":          user.Bio,
 	})
+}
+
+func UpdateUser(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		DisplayName *string `json:"display_name"`
+		StreamName  *string `json:"stream_name"`
+		Bio         *string
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if body.DisplayName != nil && utf8.RuneCountInString(*body.DisplayName) > 40 {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Display name length must be less than 40",
+		})
+		return
+	}
+
+	if body.StreamName != nil && utf8.RuneCountInString(*body.StreamName) > 50 {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Stream name length must be less than 50",
+		})
+		return
+	}
+
+	if body.Bio != nil && utf8.RuneCountInString(*body.Bio) > 500 {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Bio length must be less than 500",
+		})
+		return
+	}
+
+	user := r.Context().Value(UserKey).(db.User)
+
+	user.DisplayName = body.DisplayName
+	user.StreamName = body.StreamName
+	user.Bio = body.Bio
+
+	db.DB.Save(&user)
 }
