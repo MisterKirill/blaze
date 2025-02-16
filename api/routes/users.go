@@ -10,11 +10,77 @@ import (
 	"unicode/utf8"
 
 	"github.com/MisterKirill/blaze/api/db"
+	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 var CheckUsername = regexp.MustCompile("^[a-zA-Z0-9_]+$").MatchString
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Email    string
+		Password string
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if _, err := mail.ParseAddress(body.Email); err != nil {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Email must be an email",
+		})
+		return
+	}
+
+	if utf8.RuneCountInString(body.Password) < 8 {
+		w.WriteHeader(http.StatusUnprocessableEntity)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Password length must be 8 or greater",
+		})
+		return
+	}
+
+	var user db.User
+	db.DB.First(&user, "email = ?", body.Email)
+
+	if user.ID == 0 {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Invalid email or password",
+		})
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		json.NewEncoder(w).Encode(map[string]any{
+			"error": "Invalid email or password",
+		})
+		return
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": user.ID,
+		"iat": time.Now().Unix(),
+		"exp": time.Now().AddDate(0, 1, 0).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		HttpOnly: true,
+	})
+	w.WriteHeader(http.StatusNoContent)
+}
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 	var body struct {
@@ -110,74 +176,27 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name: "token",
-		Value: tokenString,
+		Name:     "token",
+		Value:    tokenString,
 		HttpOnly: true,
 	})
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	var body struct {
-		Email    string
-		Password string
-	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if _, err := mail.ParseAddress(body.Email); err != nil {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Email must be an email",
-		})
-		return
-	}
-
-	if utf8.RuneCountInString(body.Password) < 8 {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Password length must be 8 or greater",
-		})
-		return
-	}
+func GetUser(w http.ResponseWriter, r *http.Request) {
+	username := chi.URLParam(r, "username")
 
 	var user db.User
-	db.DB.First(&user, "email = ?", body.Email)
-
+	db.DB.First(&user, "username = ?", username)
 	if user.ID == 0 {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Invalid email or password",
-		})
+		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Invalid email or password",
-		})
-		return
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
-		"iat": time.Now().Unix(),
-		"exp": time.Now().AddDate(0, 1, 0).Unix(),
+	json.NewEncoder(w).Encode(map[string]any{
+		"username":     user.Username,
+		"display_name": user.DisplayName,
+		"stream_name":  user.StreamName,
+		"bio":          user.Bio,
 	})
-
-	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name: "token",
-		Value: tokenString,
-		HttpOnly: true,
-	})
-	w.WriteHeader(http.StatusNoContent)
 }
