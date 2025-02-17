@@ -1,5 +1,6 @@
 import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
-import Button from '../components/ui/Button';
+import { Toaster } from 'react-hot-toast'
+import Button from '../components/ui/Button'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -21,8 +22,12 @@ function RootComponent() {
       <div className="flex h-full">
         <div className="md:w-56 bg-zinc-800">sidebar</div>
 
-        <Outlet />
+        <div className="p-8">
+          <Outlet />
+        </div>
       </div>
+
+      <Toaster position="bottom-right" toastOptions={{ duration: 6000 }} />
     </div>
   )
 }
