@@ -1,6 +1,6 @@
-import { Link, Outlet, createRootRoute } from '@tanstack/react-router'
+import { Outlet, createRootRoute } from '@tanstack/react-router'
 import { Toaster } from 'react-hot-toast'
-import Button from '../components/ui/Button'
+import Navbar from '../components/Navbar'
 
 export const Route = createRootRoute({
   component: RootComponent,
@@ -9,15 +9,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <div className="flex flex-col h-screen bg-zinc-900 text-white">
-      <nav className="flex items-center justify-between px-8 bg-zinc-700 h-16">
-        <Link to="/">
-          <span className="font-bold">Blaze</span>
-        </Link>
-        
-        <Link to="/signup">
-          <Button>Sign Up</Button>
-        </Link>
-      </nav>
+      <Navbar />      
 
       <div className="flex h-full">
         <div className="md:w-56 bg-zinc-800">sidebar</div>

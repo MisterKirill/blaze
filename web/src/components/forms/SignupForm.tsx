@@ -74,7 +74,7 @@ export default function SignupForm() {
         {errors.password && <FormError>{errors.password.message}</FormError>}
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 mb-2">
         <Input
           type="password"
           placeholder="Confirm Password"
