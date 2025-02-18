@@ -9,6 +9,7 @@ func InitRoutes(r *chi.Mux) {
 
 	r.Group(func(r chi.Router) {
 		r.Use(AuthMiddleware)
+		r.Get("/users/me", GetMe)
 		r.Put("/users/me", UpdateUser)
 	})
 }

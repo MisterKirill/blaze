@@ -202,6 +202,16 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func GetMe(w http.ResponseWriter, r *http.Request) {
+	user := r.Context().Value(UserKey).(db.User)
+	json.NewEncoder(w).Encode(map[string]any{
+		"username":     user.Username,
+		"display_name": user.DisplayName,
+		"stream_name":  user.StreamName,
+		"bio":          user.Bio,
+	})
+}
+
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		DisplayName *string `json:"display_name"`
