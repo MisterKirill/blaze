@@ -78,6 +78,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    tokenString,
+		MaxAge:   int(time.Now().AddDate(0, 1, 0).Unix()),
 		HttpOnly: true,
 	})
 	w.WriteHeader(http.StatusNoContent)
@@ -179,6 +180,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "token",
 		Value:    tokenString,
+		MaxAge:   int(time.Now().AddDate(0, 1, 0).Unix()),
 		HttpOnly: true,
 	})
 	w.WriteHeader(http.StatusNoContent)
