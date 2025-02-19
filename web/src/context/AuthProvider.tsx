@@ -1,7 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { Auth, AuthContext } from './AuthContext'
 import axios from '../lib/axios'
-import toast from 'react-hot-toast'
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [auth, setAuth] = useState<Auth>({
@@ -10,16 +9,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   })
 
   useEffect(() => {
-    axios.get('/users/me')
+    axios.get('/me')
       .then((res) => {
         setAuth({
           loading: false,
           user: res.data,
         })
       })
-      .catch((err) => {
-        console.log(err)
-        toast.error('Failed to get user info')
+      .catch(() => {
+        setAuth({ loading: false, user: null })
       })
   }, [])
 

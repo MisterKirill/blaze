@@ -20,7 +20,7 @@ export default function LoginForm() {
   const navigate = useNavigate()
 
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    axios.post('/session', data)
+    axios.post('/auth/login', data)
       .then(() => {
         navigate({ to: '/' })
         toast.success(`Welcome back, ${data.email}!`)

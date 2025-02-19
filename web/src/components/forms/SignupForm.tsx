@@ -28,7 +28,7 @@ export default function SignupForm() {
       return
     }
 
-    axios.post('/users', data)
+    axios.post('/auth/register', data)
       .then(() => {
         navigate({ to: '/' })
         toast.success(`Welcome, @${data.username}!`)
