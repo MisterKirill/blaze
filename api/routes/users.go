@@ -25,13 +25,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON format"})
 		return
 	}
 
 	if _, err := mail.ParseAddress(body.Email); err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Email must be an email",
+			"error": "Invalid email format",
 		})
 		return
 	}
@@ -45,15 +46,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var user db.User
-	db.DB.First(&user, "email = ?", body.Email)
+	result := db.DB.First(&user, "email = ?", body.Email)
 
-	if user.ID == 0 {
+	if result.Error != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Invalid email or password",
-		})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid email or password"})
 		return
-	}
+	}	
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -84,7 +83,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func Register(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		Username string
 		Email    string
@@ -92,6 +91,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON format"})
 		return
 	}
 
@@ -154,6 +154,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to hash password"})
 		return
 	}
 
@@ -214,7 +215,7 @@ func GetMe(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func UpdateUser(w http.ResponseWriter, r *http.Request) {
+func UpdateMe(w http.ResponseWriter, r *http.Request) {
 	var body struct {
 		DisplayName *string `json:"display_name"`
 		StreamName  *string `json:"stream_name"`
@@ -222,6 +223,7 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON format"})
 		return
 	}
 
