@@ -52,7 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid email or password"})
 		return
-	}	
+	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -74,13 +74,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
-		Value:    tokenString,
-		MaxAge:   int(time.Now().AddDate(0, 1, 0).Unix()),
-		HttpOnly: true,
+	json.NewEncoder(w).Encode(map[string]string{
+		"token": tokenString,
 	})
-	w.WriteHeader(http.StatusNoContent)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -178,13 +174,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:     "token",
-		Value:    tokenString,
-		MaxAge:   int(time.Now().AddDate(0, 1, 0).Unix()),
-		HttpOnly: true,
+	json.NewEncoder(w).Encode(map[string]string{
+		"token": tokenString,
 	})
-	w.WriteHeader(http.StatusNoContent)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {

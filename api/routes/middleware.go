@@ -16,16 +16,16 @@ const UserKey ContextKey = "user"
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		tokenCookie, err := r.Cookie("token")
-		if err != nil {
+		authHeader := r.Header.Get("Authorization")
+		if authHeader == "" {
 			w.WriteHeader(http.StatusUnauthorized)
 			json.NewEncoder(w).Encode(map[string]any{
-				"error": "No token provided",
+				"error": "Token is not provided",
 			})
 			return
 		}
 
-		tokenString := tokenCookie.Value
+		tokenString := authHeader[7:]
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
