@@ -1,0 +1,19 @@
+name: blaze
+
+services:
+  api:
+    build: .
+    restart: always
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@postgres/postgres
+  
+  postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=postgres
