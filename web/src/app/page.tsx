@@ -9,8 +9,8 @@ export default function Page() {
         <span className="max-w-[26rem]">
           Create a free account and start streaming or watching your favorite streamers:
         </span>
-        <Link href="/signup">
-          <Button>Sign Up</Button>
+        <Link href="/register">
+          <Button>Register</Button>
         </Link>
       </div>
     </>

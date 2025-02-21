@@ -1,9 +1,17 @@
 import { ButtonHTMLAttributes } from "react";
+import clsx from "clsx";
 
-export default function Button({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  isGhost?: boolean;
+}
+
+export default function Button({ children, isGhost = false, ...props }: ButtonProps) {
   return (
     <button
-      className="bg-blue-500 hover:bg-blue-600 rounded-lg px-6 py-3 font-semibold"
+      className={clsx(
+        "rounded-lg px-5 py-3 font-semibold text-sm",
+        isGhost ? "hover:bg-slate-800" : "bg-blue-500 hover:bg-blue-600"
+      )}
       {...props}
     >
       {children}
