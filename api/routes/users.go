@@ -165,7 +165,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	db.DB.Create(&user)
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub": fmt.Sprint(user.ID),
 		"iat": time.Now().Unix(),
 		"exp": time.Now().AddDate(0, 1, 0).Unix(),
 	})
