@@ -9,9 +9,8 @@ export default function NotFound() {
   return (
     <>
       <h1 className="font-bold text-4xl mb-4">Not Found</h1>
-      <span>
-        This page was not found. You can go to the <TextLink href="/">homepage</TextLink> or <TextLink href="/contact">contact us</TextLink> if you think there is a mistake.
-      </span>
+      <p className="mb-4">This page was not found.</p>
+      <TextLink href="/">Go to the Homepage</TextLink>
     </>
   );
 }

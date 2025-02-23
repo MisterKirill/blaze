@@ -1,25 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
 import Button from "./ui/Button";
-import { Settings, UserRound } from "lucide-react";
+import { LuSettings, LuUserRound } from "react-icons/lu";
 import { getUser } from "@/utils/auth";
 
 export default async function Header() {
   const user = await getUser();
 
   return (
-    <header className="container flex items-center justify-between py-8">
+    <header className="container flex items-center justify-between py-6">
       <Link href="/" className="hover:opacity-80">
-        <Image src="/logo.svg" alt="Blaze Logo" className="h-5 w-auto" width={0} height={0} />
+        <Image src="/logo.svg" alt="Blaze Logo" className="h-5 w-auto" width={0} height={0} priority />
       </Link>
 
       {user ? (
         <div className="flex gap-6">
           <Link href="/settings">
-            <Settings size={30} className="text-slate-300 hover:text-slate-400" />
+            <LuSettings size={30} className="text-slate-300 hover:text-slate-400" />
           </Link>
           <Link href={`/${user.username}`}>
-            <UserRound size={30} className="text-slate-300 hover:text-slate-400" />
+            <LuUserRound size={30} className="text-slate-300 hover:text-slate-400" />
           </Link>
         </div>
       ) : (
