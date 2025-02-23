@@ -6,7 +6,7 @@ export default function Header() {
   return (
     <header className="container flex items-center justify-between py-6">
       <Link href="/" className="hover:opacity-80">
-        <Image src="/logo.svg" alt="Blaze Logo" className="h-6 w-auto" width={0} height={0} />
+        <Image src="/logo.svg" alt="Blaze Logo" className="h-5 w-auto" width={0} height={0} />
       </Link>
 
       <div className="flex gap-4">
