@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/mail"
-	"net/url"
 	"os"
 	"regexp"
 	"time"
@@ -87,8 +86,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Username        string
 		Email           string
 		Password        string
-		ConfirmPassword string `json:"confirm_password"`
-		Captcha         string
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -126,37 +123,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
 			"error": "Password length must be 8 or greater!",
-		})
-		return
-	}
-
-	resp, err := http.PostForm("https://api.hcaptcha.com/siteverify", url.Values{
-		"secret":   {os.Getenv("HCAPTCHA_SECRET")},
-		"response": {body.Captcha},
-	})
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Failed to validate captcha!",
-		})
-		return
-	}
-
-	var captchaResponse struct {
-		Success bool
-	}
-	if err := json.NewDecoder(resp.Body).Decode(&captchaResponse); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Failed to validate captcha!",
-		})
-		return
-	}
-
-	if !captchaResponse.Success {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]any{
-			"error": "Invalid captcha!",
 		})
 		return
 	}
