@@ -1,37 +1,38 @@
 import Image from "next/image";
 import Link from "next/link";
-import Button from "./ui/Button";
-import { LuSettings, LuUserRound } from "react-icons/lu";
-import { getUser } from "@/utils/auth";
+import Button from "./Button";
 
-export default async function Header() {
-  const user = await getUser();
-
+export default function Header() {
   return (
-    <header className="container flex items-center justify-between py-6">
-      <Link href="/" className="hover:opacity-80">
-        <Image src="/logo.svg" alt="Blaze Logo" className="h-5 w-auto" width={0} height={0} priority />
+    <header className="flex container py-6 items-center justify-between">
+      <Link href="/">
+        <Image
+          src="/big_logo.svg"
+          alt="Blaze logo"
+          className="h-6 w-auto hover:opacity-90"
+          width={0}
+          height={0}
+          priority
+        />
       </Link>
 
-      {user ? (
-        <div className="flex gap-6">
-          <Link href="/settings">
-            <LuSettings size={30} className="text-slate-300 hover:text-slate-400" />
-          </Link>
-          <Link href={`/${user.username}`}>
-            <LuUserRound size={30} className="text-slate-300 hover:text-slate-400" />
-          </Link>
-        </div>
-      ) : (
-        <div className="flex gap-4">
-          <Link href="/login">
-            <Button isGhost>Log In</Button>
-          </Link>
-          <Link href="/register">
-            <Button>Register</Button>
-          </Link>
-        </div>
-      )}
+      <form className="max-w-[40rem] w-full">
+        <input
+          type="text"
+          className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full"
+          placeholder="Search users or streams..."
+        />
+      </form>
+
+      <div className="flex gap-2">
+        <Link href="/signin">
+          <Button className="bg-transparent hover:bg-slate-800">Sign In</Button>
+        </Link>
+
+        <Link href="/signup">
+          <Button>Join Blaze</Button>
+        </Link>
+      </div>
     </header>
   );
 }

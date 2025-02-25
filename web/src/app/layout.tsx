@@ -9,7 +9,7 @@ const notoSans = Noto_Sans({
 
 export const metadata: Metadata = {
   title: "Blaze",
-  description: "Stream, watch and follow streamers on Blaze - simple video streaming platform.",
+  description: "Join the new video streaming platform",
 };
 
 export default function RootLayout({
@@ -19,12 +19,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${notoSans.className} antialiased text-slate-200`}>
+      <body className={`${notoSans.className} bg-slate-900 text-white antialiased`}>
         <Header />
-
-        <main className="container">
-          {children}
-        </main>
+        
+        <main className="container mt-4">{children}</main>
       </body>
     </html>
   );
