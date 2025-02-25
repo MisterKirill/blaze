@@ -1,5 +1,11 @@
 import SigninForm from "@/components/forms/SigninForm";
 import TextLink from "@/components/ui/TextLink";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Sign In - Blaze",
+  description: "Log into your account and start streaming or watching your favorite streamers on Blaze",
+};
 
 export default function Signin() {
   return (

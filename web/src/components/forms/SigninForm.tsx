@@ -14,7 +14,7 @@ export default function SigninForm() {
   const [state, formAction, pending] = useActionState(signIn, defaultState);
 
   return (
-    <form action={formAction} className="max-w-[25rem] mx-auto">
+    <form action={formAction} className="max-w-[30rem] mx-auto">
       <div className="flex flex-col gap-1 text-left mb-4">
         <label htmlFor="email" className="font-semibold text-sm">
           Email

@@ -30,3 +30,36 @@ export async function signIn(prevState: unknown, formData: FormData) {
 
   redirect("/");
 }
+
+export async function signUp(prevState: unknown, formData: FormData) {
+  const data = {
+    username: formData.get("username"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+    confirm_password: formData.get("confirm_password"),
+  };
+
+  if (data.password !== data.confirm_password) {
+    return {
+      confirm_password: "Passwords don't match!",
+    };
+  }
+
+  try {
+    const res = await axios.post("/auth/register", data);
+    (await cookies()).set("token", res.data.token, {
+      httpOnly: true,
+      expires: 60 * 60 * 24 * 30,
+    });
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      return err.response?.data;
+    } else {
+      return {
+        email: "Failed to authenticate!",
+      };
+    }
+  }
+
+  redirect("/");
+}
