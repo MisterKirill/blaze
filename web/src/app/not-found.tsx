@@ -1,4 +1,9 @@
-import TextLink from "@/components/TextLink";
+import TextLink from "@/components/ui/TextLink";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Not Found - Blaze",
+};
 
 export default function NotFound() {
   return (

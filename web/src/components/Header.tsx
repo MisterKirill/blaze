@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import Button from "./Button";
+import Button from "./ui/Button";
 
 export default function Header() {
   return (
@@ -9,17 +9,18 @@ export default function Header() {
         <Image
           src="/big_logo.svg"
           alt="Blaze logo"
-          className="h-6 w-auto hover:opacity-90"
+          className="h-5 w-auto hover:opacity-85"
           width={0}
           height={0}
           priority
         />
       </Link>
 
-      <form className="max-w-[40rem] w-full">
+      <form action="/search" className="max-w-[40rem] w-full">
         <input
           type="text"
-          className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full"
+          name="q"
+          className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-none focus:ring-2 ring-blue-600"
           placeholder="Search users or streams..."
         />
       </form>
