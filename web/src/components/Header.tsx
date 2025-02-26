@@ -4,8 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./ui/Button";
 import { useState } from "react";
+import { User } from "@/lib/auth";
+import { Radio, Settings, UserRound } from "lucide-react";
 
-export default function Header() {
+export default function Header({ user }: { user: User | null }) {
   const [menuOpened, setMenuOpened] = useState(false);
 
   const switchMenuOpened = () => setMenuOpened((menuOpened) => !menuOpened);
@@ -24,7 +26,7 @@ export default function Header() {
           />
         </Link>
 
-        <form role="search" action="/search" className="hidden md:block max-w-[40rem] w-full">
+        <form role="search" action="/search" className="hidden md:block max-w-[40rem] w-full mx-8">
           <input
             type="text"
             name="q"
@@ -33,15 +35,29 @@ export default function Header() {
           />
         </form>
 
-        <div className="hidden md:flex gap-2">
-          <Link href="/signin">
-            <Button className="bg-transparent hover:bg-slate-800">Sign In</Button>
-          </Link>
+        {user ? (
+          <div className="hidden md:flex gap-2">
+            <Link href="/settings" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+              <Settings size={25} />
+            </Link>
+            <Link href="/dashboard" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+              <Radio size={25} />
+            </Link>
+            <Link href={`/${user.username}`} className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+              <UserRound size={25} />
+            </Link>
+          </div>
+        ) : (
+          <div className="hidden md:flex gap-2">
+            <Link href="/signin">
+              <Button className="bg-transparent hover:bg-slate-800">Sign In</Button>
+            </Link>
 
-          <Link href="/signup">
-            <Button>Join Blaze</Button>
-          </Link>
-        </div>
+            <Link href="/signup">
+              <Button>Join Blaze</Button>
+            </Link>
+          </div>
+        )}
 
         {menuOpened ? (
           <button onClick={switchMenuOpened} className="md:hidden">
@@ -87,15 +103,29 @@ export default function Header() {
             />
           </form>
 
-          <div className="flex gap-2" onClick={switchMenuOpened}>
-            <Link href="/signin">
-              <Button className="bg-transparent hover:bg-slate-800">Sign In</Button>
-            </Link>
+          {user ? (
+            <div className="flex gap-2">
+              <Link href="/settings" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+                <Settings size={25} />
+              </Link>
+              <Link href="/dashboard" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+                <Radio size={25} />
+              </Link>
+              <Link href={`/${user.username}`} className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+                <UserRound size={25} />
+              </Link>
+            </div>
+          ) : (
+            <div className="hidden md:flex gap-2">
+              <Link href="/signin">
+                <Button className="bg-transparent hover:bg-slate-800">Sign In</Button>
+              </Link>
 
-            <Link href="/signup">
-              <Button>Join Blaze</Button>
-            </Link>
-          </div>
+              <Link href="/signup">
+                <Button>Join Blaze</Button>
+              </Link>
+            </div>
+          )}
 
           <hr className="border-slate-800 border-2 w-full" />
         </div>
