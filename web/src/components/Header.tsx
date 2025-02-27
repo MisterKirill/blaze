@@ -30,7 +30,7 @@ export default function Header({ user }: { user: User | null }) {
           <input
             type="text"
             name="q"
-            className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-none focus:ring-2 ring-blue-600"
+            className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-hidden focus:ring-2 ring-blue-600"
             placeholder="Search users or streams..."
           />
         </form>
@@ -98,7 +98,7 @@ export default function Header({ user }: { user: User | null }) {
             <input
               type="text"
               name="q"
-              className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-none focus:ring-2 ring-blue-600"
+              className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-hidden focus:ring-2 ring-blue-600"
               placeholder="Search users or streams..."
             />
           </form>

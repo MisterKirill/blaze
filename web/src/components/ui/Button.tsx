@@ -7,7 +7,7 @@ export default function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
-      className={`${className} px-5 py-3 font-semibold text-sm bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-70`}
+      className={`${className} px-5 py-3 font-semibold text-sm bg-blue-600 hover:bg-blue-700 rounded-lg disabled:opacity-70 cursor-pointer`}
       {...props}
     >
       {children}
