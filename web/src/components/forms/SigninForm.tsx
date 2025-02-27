@@ -19,7 +19,7 @@ export default function SigninForm() {
         <label htmlFor="email" className="font-semibold text-sm">
           Email
         </label>
-        <Input type="email" id="email" placeholder="johndoe@gmail.com" required />
+        <Input type="email" name="email" id="email" placeholder="johndoe@gmail.com" required />
         {state.email && (
           <span className="font-semibold text-sm text-red-400">{state.email}</span>
         )}
@@ -29,7 +29,7 @@ export default function SigninForm() {
         <label htmlFor="password" className="font-semibold text-sm">
           Password
         </label>
-        <Input type="password" id="password" placeholder="strongpa$$word" required />
+        <Input type="password" name="password" id="password" placeholder="strongpa$$word" required />
         {state.password && (
           <span className="font-semibold text-sm text-red-400">{state.password}</span>
         )}

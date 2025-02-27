@@ -13,17 +13,23 @@ export async function signIn(prevState: unknown, formData: FormData) {
 
   try {
     const res = await axios.post("/auth/login", data);
+    console.log(res.data);
     (await cookies()).set("token", res.data.token, {
       httpOnly: true,
-      expires: 60 * 60 * 24 * 30,
+      maxAge: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
     });
   } catch (err) {
     if (err instanceof AxiosError) {
-      return err.response?.data;
+      if (err.response) {
+        return err.response?.data;
+      }
+
+      return {
+        password: "Failed to get response. Please, try again in a few seconds.",
+      };
     } else {
       return {
-        email: "Failed to authenticate!",
-        password: "",
+        password: "Failed to get response. Please, try again in a few seconds.",
       };
     }
   }
@@ -49,14 +55,20 @@ export async function signUp(prevState: unknown, formData: FormData) {
     const res = await axios.post("/auth/register", data);
     (await cookies()).set("token", res.data.token, {
       httpOnly: true,
-      expires: 60 * 60 * 24 * 30,
+      maxAge: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
     });
   } catch (err) {
     if (err instanceof AxiosError) {
-      return err.response?.data;
+      if (err.response) {
+        return err.response.data;
+      }
+
+      return {
+        password: "Failed to get response. Please, try again in a few seconds.",
+      };
     } else {
       return {
-        email: "Failed to authenticate!",
+        password: "Failed to get response. Please, try again in a few seconds.",
       };
     }
   }
