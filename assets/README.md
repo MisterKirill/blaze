@@ -2,16 +2,12 @@
     <h1>Blaze Branding</h1>
 </div>
 
-**Big logo:**
-
-big_logo.svg
+**big_logo.svg**
 
 <img src="./big_logo.svg" height="60">
 
-<br>
+<br />
 
-**Small logo:**
-
-small_logo.svg
+**small_logo.svg**
 
 <img src="./small_logo.svg" width="50" height="50">
