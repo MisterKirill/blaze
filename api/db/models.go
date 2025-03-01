@@ -7,7 +7,8 @@ type User struct {
 	Username    string
 	Email       string
 	Password    string
+	Bio         *string
 	DisplayName *string
 	StreamName  *string
-	Bio         *string
+	StreamToken string
 }
