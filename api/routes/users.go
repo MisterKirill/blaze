@@ -126,7 +126,6 @@ func Search(w http.ResponseWriter, r *http.Request) {
 		Find(&users, "username ILIKE ? OR display_name ILIKE ? ESCAPE '\\'", "%" + query + "%", "%" + query + "%")
 
 	json.NewEncoder(w).Encode(map[string]any{
-		"total": len(users),
 		"users": users,
 	})
 }
