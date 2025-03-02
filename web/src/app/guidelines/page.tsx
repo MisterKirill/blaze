@@ -15,7 +15,7 @@ export default function Guidelines() {
         </p>
       </div>
 
-      <h2 className="font-bold mb-2">What You Should NOT Show on Stream/Chat</h2>
+      <h2 className="font-bold mb-2">What You Should NOT Show on Stream</h2>
       <ul className="list-decimal ml-6 mb-8">
         <li>
           <b>Hate Speech & Harassment</b> – no racism, sexism, homophobia, or any form of discrimination or bullying.

@@ -8,7 +8,7 @@ export interface TextLinkProps extends LinkProps {
 
 export default function TextLink({ children, className, ...props }: TextLinkProps) {
   return (
-    <Link className={`${className} text-blue-400 hover:text-blue-500`} {...props}>
+    <Link className={`${className} text-blue-300 hover:text-blue-400`} {...props}>
       {children}
     </Link>
   );

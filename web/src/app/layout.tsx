@@ -3,6 +3,7 @@ import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { getUser } from "@/lib/auth";
+import Footer from "@/components/Footer";
 
 const notoSans = Noto_Sans({
   subsets: ["latin", "cyrillic"],
@@ -23,9 +24,13 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${notoSans.className} bg-slate-900 text-white antialiased`}>
-        <Header user={user} />
-        
-        <main className="container mt-4">{children}</main>
+        <div className="flex flex-col h-screen">
+          <Header user={user} />
+          
+          <main className="container my-4 grow">{children}</main>
+
+          <Footer />
+        </div>
       </body>
     </html>
   );
