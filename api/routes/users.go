@@ -24,7 +24,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	resp, err := http.Get(os.Getenv("MEDIAMTX_API_URL") + "/v3/paths/get/live/" + user.Username)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get stream info"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get stream information"})
 		return
 	}
 

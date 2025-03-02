@@ -3,7 +3,6 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
 	"net/mail"
@@ -222,8 +221,6 @@ func AuthMediamtx(w http.ResponseWriter, r *http.Request) {
 
 	username := body.Path[5:]
 	token := body.Query[2:]
-
-	log.Println(username, token)
 
 	if username == "" || token == "" {
 		w.WriteHeader(http.StatusUnauthorized)

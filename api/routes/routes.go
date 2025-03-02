@@ -10,8 +10,10 @@ func InitRoutes(r *chi.Mux) {
 	r.Post("/auth/login", Login)
 	r.Post("/auth/register", Register)
 	r.Post("/auth/mediamtx", AuthMediamtx)
-	
+
 	r.Get("/users/{username}", GetUser)
+
+	r.Get("/streams", GetStreams)
 
 	r.Group(func(r chi.Router) {
 		r.Use(AuthMiddleware)

@@ -1,3 +1,5 @@
+github.com/MisterKirill/go-mediamtx v0.1.0 h1:ugbIExek6w/3kUTAvbVXRff4VUXcoaxJ2QbEUazK7Jc=
+github.com/MisterKirill/go-mediamtx v0.1.0/go.mod h1:h61cL4BHnJBSfpulQudeE6+YhAdfERDE5xj4+W3N40E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

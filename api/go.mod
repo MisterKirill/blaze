@@ -3,6 +3,7 @@ module github.com/MisterKirill/blaze/api
 go 1.24.0
 
 require (
+	github.com/MisterKirill/go-mediamtx v0.1.0
 	github.com/go-chi/cors v1.2.1
 	golang.org/x/crypto v0.33.0
 	gorm.io/gorm v1.25.12
