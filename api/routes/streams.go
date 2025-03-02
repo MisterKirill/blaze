@@ -26,7 +26,7 @@ func GetStreams(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	paths, err := client.GetPaths()
+	paths, err := client.GetPaths(30)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{
@@ -37,7 +37,7 @@ func GetStreams(w http.ResponseWriter, r *http.Request) {
 
 	streams := make([]Stream, 0)
 
-	for _, path := range paths {
+	for _, path := range paths.Items {
 		viewers := len(path.Readers)
 		username := path.Name[5:]
 
