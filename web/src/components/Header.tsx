@@ -29,9 +29,10 @@ export default function Header({ user }: { user: User | null }) {
         <form role="search" action="/search" className="hidden md:block max-w-[40rem] w-full mx-8">
           <input
             type="text"
-            name="q"
+            name="query"
             className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-hidden focus:ring-2 ring-blue-600"
-            placeholder="Search users or streams..."
+            placeholder="Search users..."
+            minLength={3}
           />
         </form>
 

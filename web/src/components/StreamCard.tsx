@@ -18,7 +18,7 @@ export default function StreamCard({ stream }: { stream: StreamInfo }) {
       )}
       
       <span className="text-slate-400 font-medium">
-        {convertNumber(stream.viewers_count)} viewers • {moment(stream.stream_ready_time).fromNow()}
+        {convertNumber(stream.viewers_count)} viewer{stream.viewers_count != 1 && "s"} • {moment(stream.stream_ready_time).fromNow()}
       </span>
 
       <span className="text-slate-400 font-medium">

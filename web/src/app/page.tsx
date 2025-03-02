@@ -21,7 +21,7 @@ export default async function Home() {
         <h1 className="font-semibold text-3xl">Active streams</h1>
       </div>
 
-      <div className="flex justify-center flex-wrap gap-6 mb-12">
+      <div className="flex flex-wrap gap-4 mb-12">
         {streams ? (
           streams.length == 0 ? (
             <p>No one is streaming right now. Be the first!</p>
@@ -33,7 +33,7 @@ export default async function Home() {
         )}
       </div>
 
-      {user && (
+      {!user && (
         <div>
           <h1 className="font-semibold text-3xl mb-4">Join Blaze</h1>
           <p className="mb-3">
