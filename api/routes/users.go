@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/MisterKirill/blaze/api/db"
@@ -72,32 +73,22 @@ func UpdateMe(w http.ResponseWriter, r *http.Request) {
 		Bio         *string
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON format!"})
+		http.Error(w, `{"error": "Invalid JSON format"}`, http.StatusBadRequest)
 		return
 	}
 
 	if body.DisplayName != nil && utf8.RuneCountInString(*body.DisplayName) > 40 {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]any{
-			"display_name": "Display name length must be less than 40!",
-		})
+		http.Error(w, `{"bio": "Display name should be at most 40 characters"}`, http.StatusUnprocessableEntity)
 		return
 	}
 
 	if body.StreamName != nil && utf8.RuneCountInString(*body.StreamName) > 50 {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]any{
-			"stream_name": "Stream name length must be less than 50!",
-		})
+		http.Error(w, `{"stream_name": "Stream name should be at most 50 characters"}`, http.StatusUnprocessableEntity)
 		return
 	}
 
 	if body.Bio != nil && utf8.RuneCountInString(*body.Bio) > 500 {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		json.NewEncoder(w).Encode(map[string]any{
-			"bio": "Bio length must be less than 500!",
-		})
+		http.Error(w, `{"bio": "Bio should be at most 500 characters"}`, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -108,4 +99,34 @@ func UpdateMe(w http.ResponseWriter, r *http.Request) {
 	user.Bio = body.Bio
 
 	db.DB.Save(&user)
+}
+
+func Search(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query().Get("query")
+	if query == "" {
+		http.Error(w, `{"error": "Search query not provided"}`, http.StatusBadRequest)
+		return
+	}
+
+	if len(query) < 3 {
+		http.Error(w, `{"error": "Search query must be at least 3 characters"}`, http.StatusBadRequest)
+		return
+	}
+
+	query = strings.ReplaceAll(query, "%", "\\%")
+	query = strings.ReplaceAll(query, "_", "\\_")
+
+	var users []struct {
+		Username    string `json:"username"`
+		DisplayName *string `json:"display_name"`
+	}
+	db.DB.
+		Model(&db.User{}).
+		Limit(50).
+		Find(&users, "username ILIKE ? OR display_name ILIKE ? ESCAPE '\\'", "%" + query + "%", "%" + query + "%")
+
+	json.NewEncoder(w).Encode(map[string]any{
+		"total": len(users),
+		"users": users,
+	})
 }

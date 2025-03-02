@@ -13,6 +13,8 @@ func InitRoutes(r *chi.Mux) {
 
 	r.Get("/users/{username}", GetUser)
 
+	r.Get("/search", Search)
+
 	r.Get("/streams", GetStreams)
 
 	r.Group(func(r chi.Router) {
