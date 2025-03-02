@@ -13,7 +13,6 @@ export async function signIn(prevState: unknown, formData: FormData) {
 
   try {
     const res = await axios.post("/auth/login", data);
-    console.log(res.data);
     (await cookies()).set("token", res.data.token, {
       httpOnly: true,
       maxAge: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
