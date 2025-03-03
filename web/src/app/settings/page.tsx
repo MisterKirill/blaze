@@ -1,24 +1,20 @@
 import Button from "@/components/ui/Button";
 import { Metadata } from "next";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { signOut } from "../actions";
+import ChangePasswordForm from "@/components/forms/ChangePasswordForm";
 
 export const metadata: Metadata = {
   title: "Settings - Blaze",
 };
 
 export default function Settings() {
-  const signOut = async () => {
-    "use server";
-    (await cookies()).delete("token");
-    redirect("/login");
-  }
-
   return (
     <>
-      <h1 className="mb-4 font-bold text-4xl">Settings</h1>
+      <h2 className="mb-4 text-2xl font-bold">Update Password</h2>
 
-      <h2 className="mb-4 text-2xl font-bold">Account settings</h2>
+      <ChangePasswordForm />
+
+      <h2 className="mb-4 text-2xl font-bold mt-6">Danger Zone</h2>
 
       <Button className="bg-red-500 hover:bg-red-600" onClick={signOut}>
         Sign out

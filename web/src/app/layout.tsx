@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { getUser } from "@/lib/auth";
 import Footer from "@/components/Footer";
+import ProgressBar from "@/components/ProgressBar";
 
 const notoSans = Noto_Sans({
   subsets: ["latin", "cyrillic"],
@@ -24,11 +25,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${notoSans.className} bg-slate-900 text-white antialiased`}>
+        <ProgressBar />
+
         <div className="flex flex-col h-screen">
           <Header user={user} />
-          
-          <main className="container my-4 grow">{children}</main>
-
+          <main className="container mt-4 mb-24 grow">{children}</main>
           <Footer />
         </div>
       </body>

@@ -20,7 +20,7 @@ export async function signIn(prevState: unknown, formData: FormData) {
   } catch (err) {
     if (err instanceof AxiosError) {
       if (err.response) {
-        return err.response?.data;
+        return err.response.data;
       }
 
       return {
@@ -41,12 +41,12 @@ export async function signUp(prevState: unknown, formData: FormData) {
     username: formData.get("username"),
     email: formData.get("email"),
     password: formData.get("password"),
-    confirm_password: formData.get("confirm_password"),
+    password_confirm: formData.get("password_confirm"),
   };
 
-  if (data.password !== data.confirm_password) {
+  if (data.password !== data.password_confirm) {
     return {
-      confirm_password: "Passwords don't match!",
+      password_confirm: "Passwords don't match!",
     };
   }
 
@@ -73,4 +73,47 @@ export async function signUp(prevState: unknown, formData: FormData) {
   }
 
   redirect("/");
+}
+
+export async function signOut() {
+  (await cookies()).delete("token");
+  redirect("/signin");
+}
+
+export async function changePassword(prevState: unknown, formData: FormData) {
+  const data = {
+    old_password: formData.get("old_password"),
+    new_password: formData.get("new_password"),
+    new_password_confirm: formData.get("new_password_confirm"),
+  };
+
+  if (data.new_password !== data.new_password_confirm) {
+    return {
+      new_password_confirm: "Passwords don't match!",
+    };
+  }
+
+  console.log(data);
+
+  try {
+    await axios.patch("/me/password", data);
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      if (err.response) {
+        return err.response.data;
+      }
+
+      return {
+        new_password: "Failed to get response. Please, try again in a few seconds.",
+      };
+    } else {
+      return {
+        new_password: "Failed to get response. Please, try again in a few seconds.",
+      };
+    }
+  }
+
+  return {
+    new_password: "Password updated successfully!",
+  };
 }

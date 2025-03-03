@@ -20,18 +20,23 @@ export default function SigninForm() {
           Email
         </label>
         <Input type="email" name="email" id="email" placeholder="johndoe@gmail.com" required />
-        {state.email && (
-          <span className="font-semibold text-sm text-red-400">{state.email}</span>
-        )}
+        {state.email && <span className="font-semibold text-sm">{state.email}</span>}
       </div>
 
       <div className="flex flex-col gap-1 text-left mb-4">
         <label htmlFor="password" className="font-semibold text-sm">
           Password
         </label>
-        <Input type="password" name="password" id="password" placeholder="strongpa$$word" required />
+        <Input
+          type="password"
+          name="password"
+          id="password"
+          placeholder="strongpa$$word"
+          minLength={8}
+          required
+        />
         {state.password && (
-          <span className="font-semibold text-sm text-red-400">{state.password}</span>
+          <span className="font-semibold text-sm">{state.password}</span>
         )}
       </div>
 

@@ -9,7 +9,7 @@ const defaultState = {
   username: "",
   email: "",
   password: "",
-  confirm_password: "",
+  password_confirm: "",
 };
 
 export default function SignupForm() {
@@ -23,7 +23,7 @@ export default function SignupForm() {
         </label>
         <Input type="text" name="username" id="username" placeholder="coolguy" required />
         {state.username && (
-          <span className="font-semibold text-sm text-red-400">{state.username}</span>
+          <span className="font-semibold text-sm">{state.username}</span>
         )}
       </div>
 
@@ -32,7 +32,7 @@ export default function SignupForm() {
           Email
         </label>
         <Input type="email" name="email" id="email" placeholder="coolguy@gmail.com" required />
-        {state.email && <span className="font-semibold text-sm text-red-400">{state.email}</span>}
+        {state.email && <span className="font-semibold text-sm">{state.email}</span>}
       </div>
 
       <div className="flex flex-col gap-1 text-left mb-4">
@@ -44,10 +44,11 @@ export default function SignupForm() {
           name="password"
           id="password"
           placeholder="strongpa$$word"
+          minLength={8}
           required
         />
         {state.password && (
-          <span className="font-semibold text-sm text-red-400">{state.password}</span>
+          <span className="font-semibold text-sm">{state.password}</span>
         )}
       </div>
 
@@ -60,10 +61,11 @@ export default function SignupForm() {
           name="confirm_password"
           id="confirm_password"
           placeholder="strongpa$$word"
+          minLength={8}
           required
         />
-        {state.confirm_password && (
-          <span className="font-semibold text-sm text-red-400">{state.confirm_password}</span>
+        {state.password_confirm && (
+          <span className="font-semibold text-sm">{state.password_confirm}</span>
         )}
       </div>
 

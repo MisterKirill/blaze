@@ -37,14 +37,14 @@ export default function Header({ user }: { user: User | null }) {
         </form>
 
         {user ? (
-          <div className="hidden md:flex gap-2">
-            <Link href="/settings" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+          <div className="hidden md:flex gap-2 text-slate-300">
+            <Link href="/settings" className="hover:bg-slate-800 p-2 rounded-lg">
               <Settings size={25} />
             </Link>
-            <Link href="/dashboard" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+            <Link href="/dashboard" className="hover:bg-slate-800 p-2 rounded-lg">
               <Radio size={25} />
             </Link>
-            <Link href={`/${user.username}`} className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+            <Link href={`/${user.username}`} className="hover:bg-slate-800 p-2 rounded-lg">
               <UserRound size={25} />
             </Link>
           </div>
@@ -98,21 +98,22 @@ export default function Header({ user }: { user: User | null }) {
           <form role="search" action="/search" className="max-w-[40rem] w-full">
             <input
               type="text"
-              name="q"
+              name="query"
               className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-full w-full outline-hidden focus:ring-2 ring-blue-600"
-              placeholder="Search users or streams..."
+              placeholder="Search users..."
+              minLength={3}
             />
           </form>
 
           {user ? (
-            <div className="flex gap-2">
-              <Link href="/settings" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+            <div className="flex gap-2 text-slate-300">
+              <Link href="/settings" className="hover:bg-slate-800 p-2 rounded-lg">
                 <Settings size={25} />
               </Link>
-              <Link href="/dashboard" className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+              <Link href="/dashboard" className="hover:bg-slate-800 p-2 rounded-lg">
                 <Radio size={25} />
               </Link>
-              <Link href={`/${user.username}`} className="text-slate-400 hover:bg-slate-800 p-2 rounded-lg">
+              <Link href={`/${user.username}`} className="hover:bg-slate-800 p-2 rounded-lg">
                 <UserRound size={25} />
               </Link>
             </div>
