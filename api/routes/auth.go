@@ -76,9 +76,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub":      fmt.Sprint(user.ID),
-		"username": user.Username,
 		"iat":      time.Now().Unix(),
 		"exp":      time.Now().AddDate(0, 1, 0).Unix(),
+		"username": user.Username,
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
@@ -180,9 +180,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub":      fmt.Sprint(user.ID),
-		"username": user.Username,
 		"iat":      time.Now().Unix(),
 		"exp":      time.Now().AddDate(0, 1, 0).Unix(),
+		"username": user.Username,
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
