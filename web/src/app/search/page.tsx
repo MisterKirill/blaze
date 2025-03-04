@@ -20,7 +20,7 @@ export default async function Search({
   const users = await searchUsers(query);
 
   if (!users) {
-    return <h1 className="font-bold text-4xl mb-4">Failed to search users</h1>;
+    return <span>Failed to search users. Please, try again in a few seconds.</span>;
   }
 
   return (

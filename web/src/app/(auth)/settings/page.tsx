@@ -1,18 +1,18 @@
 import Button from "@/components/ui/Button";
 import { Metadata } from "next";
-import { signOut } from "../actions";
-import ChangePasswordForm from "@/components/forms/ChangePasswordForm";
+import { signOut } from "../../actions";
+import UpdatePasswordForm from "@/components/forms/UpdatePasswordForm";
 
 export const metadata: Metadata = {
   title: "Settings - Blaze",
 };
 
-export default function Settings() {
+export default async function Settings() {
   return (
     <>
       <h2 className="mb-4 text-2xl font-bold">Update Password</h2>
 
-      <ChangePasswordForm />
+      <UpdatePasswordForm />
 
       <h2 className="mb-4 text-2xl font-bold mt-6">Danger Zone</h2>
 

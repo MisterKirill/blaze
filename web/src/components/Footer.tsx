@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="flex py-6 bg-slate-800">
       <div className="container text-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <p className="font-semibold">&copy; 2025 Blaze. All Rights Reserved.</p>
+          <p className="font-semibold mb-1">&copy; 2025 Blaze. All Rights Reserved.</p>
           <p>
             <TextLink href="/guidelines">Guidelines</TextLink>
           </p>

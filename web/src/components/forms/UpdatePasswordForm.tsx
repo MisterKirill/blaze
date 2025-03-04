@@ -11,7 +11,7 @@ const defaultState = {
   new_password_confirm: "",
 };
 
-export default function SigninForm() {
+export default function UpdatePasswordForm() {
   const [state, formAction, pending] = useActionState(changePassword, defaultState);
 
   return (
