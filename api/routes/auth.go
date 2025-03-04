@@ -19,7 +19,7 @@ import (
 var CheckUsername = regexp.MustCompile("^[a-zA-Z0-9_]+$").MatchString
 var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-func GenerateStreamToken() string {
+func GenerateStreamKey() string {
 	charset := "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
 	b := make([]byte, 32)
 	for i := range b {
@@ -173,7 +173,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Username:    body.Username,
 		Email:       body.Email,
 		Password:    string(passwordHash),
-		StreamToken: GenerateStreamToken(),
+		StreamKey:   GenerateStreamKey(),
 	}
 
 	db.DB.Create(&user)
@@ -220,15 +220,15 @@ func AuthMediamtx(w http.ResponseWriter, r *http.Request) {
 	}
 
 	username := body.Path[5:]
-	token := body.Query[2:]
+	streamKey := body.Query[2:]
 
-	if username == "" || token == "" {
+	if username == "" || streamKey == "" {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
 	var user db.User
-	db.DB.First(&user, "username = ? AND stream_token = ?", username, token)
+	db.DB.First(&user, "username = ? AND stream_key = ?", username, streamKey)
 
 	if user.ID == 0 {
 		w.WriteHeader(http.StatusUnauthorized)

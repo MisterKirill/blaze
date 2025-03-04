@@ -17,7 +17,7 @@ func GetMe(w http.ResponseWriter, r *http.Request) {
 		"bio":          user.Bio,
 		"display_name": user.DisplayName,
 		"stream_name":  user.StreamName,
-		"stream_token": fmt.Sprintf("%s?t=%s", user.Username, user.StreamToken),
+		"stream_key": fmt.Sprintf("%s?k=%s", user.Username, user.StreamKey),
 	})
 }
 

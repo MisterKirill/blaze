@@ -10,5 +10,5 @@ type User struct {
 	Bio         *string
 	DisplayName *string
 	StreamName  *string
-	StreamToken string
+	StreamKey   string
 }
