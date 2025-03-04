@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/MisterKirill/blaze/api/db"
+	"github.com/MisterKirill/go-mediamtx/mediamtx"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -20,37 +21,32 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resp, err := http.Get(os.Getenv("MEDIAMTX_API_URL") + "/v3/paths/get/live/" + user.Username)
+	client, err := mediamtx.New(os.Getenv("MEDIAMTX_API_URL"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get stream information"})
 		return
 	}
 
-	switch resp.StatusCode {
-	case http.StatusOK:
-		json.NewEncoder(w).Encode(map[string]any{
-			"username":     user.Username,
-			"bio":          user.Bio,
-			"display_name": user.DisplayName,
-			"stream": map[string]any{
-				"name": user.StreamName,
-				"url":  os.Getenv("MEDIAMTX_HLS_URL") + "/live/" + user.Username + "/index.m3u8",
-			},
-		})
-
-	case http.StatusNotFound:
+	if _, err = client.GetPath("live/" + user.Username); err != nil {
 		json.NewEncoder(w).Encode(map[string]any{
 			"username":     user.Username,
 			"bio":          user.Bio,
 			"display_name": user.DisplayName,
 			"stream":       nil,
 		})
-
-	default:
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get stream info"})
+		return
 	}
+
+	json.NewEncoder(w).Encode(map[string]any{
+		"username":     user.Username,
+		"bio":          user.Bio,
+		"display_name": user.DisplayName,
+		"stream": map[string]any{
+			"name": user.StreamName,
+			"url":  os.Getenv("MEDIAMTX_HLS_URL") + "/live/" + user.Username + "/index.m3u8",
+		},
+	})
 }
 
 func Search(w http.ResponseWriter, r *http.Request) {
