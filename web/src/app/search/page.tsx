@@ -3,7 +3,7 @@ import { searchUsers } from "@/lib/users";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: `Search results - Blaze`,
+  title: "Search results - Blaze",
 };
 
 export default async function Search({

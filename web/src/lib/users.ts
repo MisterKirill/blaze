@@ -7,8 +7,8 @@ export interface SearchUser {
 
 export async function searchUsers(query: string) {
   try {
-    const res = await axios.get("/search", {
-      params: { query },
+    const res = await axios.get("/users", {
+      params: { search: query },
     });
 
     return res.data.users as SearchUser[];
