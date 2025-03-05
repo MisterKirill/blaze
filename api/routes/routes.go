@@ -8,8 +8,7 @@ func InitRoutes(r *chi.Mux) {
 	r.Post("/auth/mediamtx", AuthMediamtx)
 
 	r.Get("/users/{username}", GetUser)
-
-	r.Get("/search", Search)
+	r.Get("/users", SearchUsers)
 
 	r.Get("/streams", GetStreams)
 

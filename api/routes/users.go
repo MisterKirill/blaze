@@ -49,7 +49,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func Search(w http.ResponseWriter, r *http.Request) {
+func SearchUsers(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query().Get("query")
 	if query == "" {
 		w.WriteHeader(http.StatusBadRequest)
