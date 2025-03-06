@@ -1,12 +1,16 @@
 package routes
 
 import (
-	"github.com/gofiber/fiber/v3"
+	"database/sql"
+
 	"github.com/MisterKirill/blaze/api/handlers"
+	"github.com/gofiber/fiber/v3"
 )
 
-func SetupRoutes(app *fiber.App) {
-	app.Post("/auth/register", handlers.RegisterHandler)
+func SetupRoutes(app *fiber.App, db *sql.DB) {
+	app.Post("/auth/register", func (c fiber.Ctx) error {
+		return handlers.RegisterHandler(c, db)
+	})
 	app.Post("/auth/login", handlers.LoginHandler)
 	app.Get("/users/search", handlers.SearchUsersHandler)
 	app.Get("/users/:username", handlers.GetUserHandler)

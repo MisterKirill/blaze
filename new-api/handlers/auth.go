@@ -1,8 +1,12 @@
 package handlers
 
-import "github.com/gofiber/fiber/v3"
+import (
+	"database/sql"
 
-func RegisterHandler(c fiber.Ctx) error {
+	"github.com/gofiber/fiber/v3"
+)
+
+func RegisterHandler(c fiber.Ctx, db *sql.DB) error {
 	return c.SendString("Register")
 }
 
