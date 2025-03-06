@@ -8,9 +8,7 @@ import (
 )
 
 type Config struct {
-	Server struct {
-		Port int `json:"port"`
-	} `json:"server"`
+	Port     int `json:"port"`
 	Database struct {
 		Host     string `json:"host"`
 		Port     int    `json:"port"`

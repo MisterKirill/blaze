@@ -17,7 +17,7 @@ func main() {
 		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	db, err := database.ConnectDatabase(cfg)
+	db, err := database.InitDatabase(cfg)
 	if err != nil {
 		log.Fatalf("Failed to connect database: %v", err)
 	}
@@ -27,5 +27,5 @@ func main() {
 
 	routes.SetupRoutes(app, db)
 
-	app.Listen(fmt.Sprintf(":%d", cfg.Server.Port))
+	app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }

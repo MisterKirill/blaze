@@ -12,7 +12,7 @@ func SetupRoutes(app *fiber.App, db *sql.DB) {
 		return handlers.RegisterHandler(c, db)
 	})
 	app.Post("/auth/login", handlers.LoginHandler)
-	app.Get("/users/search", handlers.SearchUsersHandler)
+	app.Get("/users", handlers.SearchUsersHandler)
 	app.Get("/users/:username", handlers.GetUserHandler)
 	app.Get("/streams/active", handlers.GetActiveStreamsHandler)
 	app.Get("/users/me", handlers.GetMeHandler)
