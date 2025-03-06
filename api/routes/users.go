@@ -28,7 +28,9 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if _, err = client.GetPath("live/" + user.Username); err != nil {
+	path, err := client.GetPath("live/" + user.Username)
+
+	if err != nil {
 		json.NewEncoder(w).Encode(map[string]any{
 			"username":     user.Username,
 			"bio":          user.Bio,
@@ -38,13 +40,18 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	viewersCount := len(path.Readers)
+	streamUrl := os.Getenv("MEDIAMTX_HLS_URL") + "/live/" + user.Username + "/index.m3u8"
+
 	json.NewEncoder(w).Encode(map[string]any{
 		"username":     user.Username,
 		"bio":          user.Bio,
 		"display_name": user.DisplayName,
 		"stream": map[string]any{
-			"name": user.StreamName,
-			"url":  os.Getenv("MEDIAMTX_HLS_URL") + "/live/" + user.Username + "/index.m3u8",
+			"name":          user.StreamName,
+			"url":           streamUrl,
+			"ready_time":    path.ReadyTime,
+			"viewers_count": viewersCount,
 		},
 	})
 }

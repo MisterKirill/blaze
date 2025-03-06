@@ -42,7 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if _, err := mail.ParseAddress(body.Email); err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"email": "Invalid email format!",
+			"error": "Invalid email format!",
 		})
 		return
 	}
@@ -50,7 +50,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if utf8.RuneCountInString(body.Password) < 8 {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"password": "Password length must be 8 or greater!",
+			"error": "Password length must be 8 or greater!",
 		})
 		return
 	}
@@ -61,7 +61,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if result.Error != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]string{
-			"email": "Invalid email or password!",
+			"error": "Invalid email or password!",
 		})
 		return
 	}
@@ -69,7 +69,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(map[string]any{
-			"email": "Invalid email or password!",
+			"error": "Invalid email or password!",
 		})
 		return
 	}
@@ -109,7 +109,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if usernameLength < 3 || usernameLength > 40 {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"username": "Username length must be in between 3 and 40!",
+			"error": "Username length must be in between 3 and 40!",
 		})
 		return
 	}
@@ -117,7 +117,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if !CheckUsername(body.Username) {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"username": "Username may only contain English letters, numbers and underscores!",
+			"error": "Username may only contain English letters, numbers and underscores!",
 		})
 		return
 	}
@@ -125,7 +125,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if _, err := mail.ParseAddress(body.Email); err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"email": "Invalid email format!",
+			"error": "Invalid email format!",
 		})
 		return
 	}
@@ -133,7 +133,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if utf8.RuneCountInString(body.Password) < 8 {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		json.NewEncoder(w).Encode(map[string]any{
-			"password": "Password length must be 8 or greater!",
+			"error": "Password length must be 8 or greater!",
 		})
 		return
 	}
@@ -144,7 +144,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if usernameCheck.ID != 0 {
 		w.WriteHeader(http.StatusConflict)
 		json.NewEncoder(w).Encode(map[string]any{
-			"username": "This username is already in use!",
+			"error": "This username is already in use!",
 		})
 		return
 	}
@@ -155,7 +155,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if emailCheck.ID != 0 {
 		w.WriteHeader(http.StatusConflict)
 		json.NewEncoder(w).Encode(map[string]any{
-			"email": "This email is already in use!",
+			"error": "This email is already in use!",
 		})
 		return
 	}
@@ -164,7 +164,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{
-			"password": "Failed to hash password. Please, try again.",
+			"error": "Failed to hash password. Please, try again.",
 		})
 		return
 	}

@@ -10,11 +10,11 @@ import (
 )
 
 type Stream struct {
-	StreamName      *string `json:"stream_name"`
-	StreamReadyTime string  `json:"stream_ready_time"`
-	DisplayName     *string `json:"display_name"`
-	Username        string  `json:"username"`
-	ViewersCount    int     `json:"viewers_count"`
+	Name         *string `json:"stream_name"`
+	ReadyTime    string  `json:"stream_ready_time"`
+	DisplayName  *string `json:"display_name"`
+	Username     string  `json:"username"`
+	ViewersCount int     `json:"viewers_count"`
 }
 
 func GetStreams(w http.ResponseWriter, r *http.Request) {
@@ -46,11 +46,11 @@ func GetStreams(w http.ResponseWriter, r *http.Request) {
 		db.DB.First(&user, "username = ?", username)
 
 		streams = append(streams, Stream{
-			StreamName:      user.StreamName,
-			StreamReadyTime: path.ReadyTime,
-			DisplayName:     user.DisplayName,
-			Username:        user.Username,
-			ViewersCount:    viewersCount,
+			Name:         user.StreamName,
+			ReadyTime:    path.ReadyTime,
+			DisplayName:  user.DisplayName,
+			Username:     user.Username,
+			ViewersCount: viewersCount,
 		})
 	}
 
