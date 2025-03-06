@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path"
 )
 
 type Config struct {
@@ -16,17 +15,11 @@ type Config struct {
 		Password string `json:"password"`
 		DBName   string `json:"dbname"`
 	} `json:"database"`
+	JwtSecret string `json:"jwt_secret"`
 }
 
 func LoadConfig() (*Config, error) {
-	wd, err := os.Getwd()
-	if err != nil {
-		return nil, fmt.Errorf("could not get working directory: %v", err)
-	}
-
-	configPath := path.Join(wd, "config.json")
-
-	file, err := os.Open(configPath)
+	file, err := os.Open("config.json")
 	if err != nil {
 		return nil, fmt.Errorf("could not open config file: %v", err)
 	}

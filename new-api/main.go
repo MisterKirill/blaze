@@ -25,7 +25,7 @@ func main() {
 	app := fiber.New()
 	app.Use(logger.New())
 
-	routes.SetupRoutes(app, db)
+	routes.SetupRoutes(app, db, cfg)
 
 	app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
