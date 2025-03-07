@@ -15,8 +15,8 @@ type User struct {
 }
 
 type SafeUser struct {
-	Username    string
-	Bio         *string
-	DisplayName *string
-	StreamName  *string
+	Username    string  `json:"username"`
+	Bio         *string `json:"bio"`
+	DisplayName *string `json:"display_name"`
+	StreamName  *string `json:"stream_name"`
 }

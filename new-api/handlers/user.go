@@ -48,8 +48,31 @@ func SearchUsersHandler(c fiber.Ctx, db *sql.DB) error {
 	})
 }
 
-func GetUserHandler(c fiber.Ctx) error {
-	return c.SendString("GetUserHandler")
+func GetUserHandler(c fiber.Ctx, db *sql.DB) error {
+	username := c.Params("username")
+	if username == "" {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Username not found",
+		})
+	}
+
+	var user models.SafeUser
+	err := db.QueryRow(
+		"SELECT username, bio, display_name, stream_name FROM users WHERE username = $1",
+		username,
+	).Scan(&user.Username, &user.Bio, &user.DisplayName, &user.StreamName)
+	if err == sql.ErrNoRows {
+		return c.Status(http.StatusNotFound).JSON(fiber.Map{
+			"error": "User not found",
+		})
+	}
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get user",
+		})
+	}
+
+	return c.JSON(user)
 }
 
 func GetMeHandler(c fiber.Ctx) error {
