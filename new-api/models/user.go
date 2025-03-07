@@ -1,9 +1,6 @@
 package models
 
-import (
-	"database/sql"
-	"time"
-)
+import "time"
 
 type User struct {
 	ID          int
@@ -11,8 +8,15 @@ type User struct {
 	Email       string
 	CreatedAt   time.Time
 	Password    string
-	Bio         sql.NullString
-	DisplayName sql.NullString
-	StreamName  sql.NullString
+	Bio         *string
+	DisplayName *string
+	StreamName  *string
 	StreamKey   string
+}
+
+type SafeUser struct {
+	Username    string
+	Bio         *string
+	DisplayName *string
+	StreamName  *string
 }

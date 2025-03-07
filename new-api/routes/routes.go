@@ -15,7 +15,9 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 	app.Post("/auth/login", func(c fiber.Ctx) error {
 		return handlers.LoginHandler(c, db, cfg)
 	})
-	app.Get("/users", handlers.SearchUsersHandler)
+	app.Get("/users", func(c fiber.Ctx) error {
+		return handlers.SearchUsersHandler(c, db)
+	})
 	app.Get("/users/:username", handlers.GetUserHandler)
 	app.Get("/streams/active", handlers.GetActiveStreamsHandler)
 	app.Get("/users/me", handlers.GetMeHandler)
