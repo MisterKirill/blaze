@@ -15,6 +15,10 @@ type Config struct {
 		Password string `json:"password"`
 		DBName   string `json:"dbname"`
 	} `json:"database"`
+	MediaMTX struct {
+		HLSUrl string `json:"hls_url"`
+		APIUrl string `json:"api_url"`
+	} `json:"mediamtx"`
 	JwtSecret string `json:"jwt_secret"`
 }
 

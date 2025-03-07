@@ -193,3 +193,7 @@ func LoginHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 		"token": tokenString,
 	})
 }
+
+func MediaMTXAuthHandler(c *fiber.Ctx) error {
+	return c.SendString("MediaMTXAuthHandler")
+}

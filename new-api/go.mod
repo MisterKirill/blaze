@@ -2,7 +2,10 @@ module github.com/MisterKirill/blaze/api
 
 go 1.24.0
 
-require github.com/gofiber/fiber/v2 v2.52.5
+require (
+	github.com/MisterKirill/blaze/mediamtx v0.0.0-20250307182846-ee6e510622f1
+	github.com/gofiber/fiber/v2 v2.52.5
+)
 
 require (
 	github.com/mattn/go-runewidth v0.0.15 // indirect
