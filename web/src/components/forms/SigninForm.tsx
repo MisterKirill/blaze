@@ -6,8 +6,7 @@ import Input from "../ui/Input";
 import { signIn } from "@/app/actions";
 
 const defaultState = {
-  email: "",
-  password: "",
+  error: "",
 };
 
 export default function SigninForm() {
@@ -20,7 +19,6 @@ export default function SigninForm() {
           Email
         </label>
         <Input type="email" name="email" id="email" placeholder="johndoe@gmail.com" required />
-        {state.email && <span className="font-semibold text-sm">{state.email}</span>}
       </div>
 
       <div className="flex flex-col gap-1 text-left mb-4">
@@ -35,10 +33,9 @@ export default function SigninForm() {
           minLength={8}
           required
         />
-        {state.password && (
-          <span className="font-semibold text-sm">{state.password}</span>
-        )}
       </div>
+
+      {state.error && <p className="font-semibold text-sm mb-4 text-left">{state.error}</p>}
 
       <Button type="submit" className="w-full" disabled={pending}>
         Submit

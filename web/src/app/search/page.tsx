@@ -1,5 +1,5 @@
 import SearchUserCard from "@/components/SearchUserCard";
-import { searchUsers } from "@/lib/users";
+import { SearchUser, searchUsers } from "@/lib/api";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,12 +14,14 @@ export default async function Search({
   const query = (await searchParams).query;
 
   if (!query) {
-    return <h1 className="font-bold text-4xl mb-4">No query provided!</h1>;
+    return <span>No search query provided!</span>;
   }
 
-  const users = await searchUsers(query);
+  let users: SearchUser[] = [];
 
-  if (!users) {
+  try {
+    users = await searchUsers(query);
+  } catch {
     return <span>Failed to search users. Please, try again in a few seconds.</span>;
   }
 

@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./ui/Button";
 import { useState } from "react";
-import { User } from "@/lib/auth";
+import { getMe } from "@/lib/api";
 import { Radio, Settings, UserRound } from "lucide-react";
 
 export default function Header({ user }: { user: User | null }) {

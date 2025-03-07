@@ -1,35 +1,24 @@
 "use server";
 
-import axios from "@/lib/axios";
-import { AxiosError } from "axios";
+import { login, register, updatePassword } from "@/lib/api";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function signIn(prevState: unknown, formData: FormData) {
   const data = {
-    email: formData.get("email"),
-    password: formData.get("password"),
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
   };
 
   try {
-    const res = await axios.post("/auth/login", data);
-    (await cookies()).set("token", res.data.token, {
+    const { token } = await login(data.email, data.password);
+    (await cookies()).set("token", token, {
       httpOnly: true,
       maxAge: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
     });
   } catch (err) {
-    if (err instanceof AxiosError) {
-      if (err.response) {
-        return err.response.data;
-      }
-
-      return {
-        password: "Failed to get response. Please, try again in a few seconds.",
-      };
-    } else {
-      return {
-        password: "Failed to get response. Please, try again in a few seconds.",
-      };
+    if (err instanceof Error) {
+      return { error: err.message };
     }
   }
 
@@ -38,38 +27,28 @@ export async function signIn(prevState: unknown, formData: FormData) {
 
 export async function signUp(prevState: unknown, formData: FormData) {
   const data = {
-    username: formData.get("username"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    password_confirm: formData.get("password_confirm"),
+    username: formData.get("username") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+    password_confirm: formData.get("password_confirm") as string,
   };
 
   if (data.password !== data.password_confirm) {
     return {
-      password_confirm: "Passwords don't match!",
+      error: "Passwords don't match!",
     };
   }
 
   try {
-    const res = await axios.post("/auth/register", data);
-    (await cookies()).set("token", res.data.token, {
+    const { token } = await register(data.username, data.email, data.password);
+    (await cookies()).set("token", token, {
       httpOnly: true,
       maxAge: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30,
     });
-  } catch (err) {
-    if (err instanceof AxiosError) {
-      if (err.response) {
-        return err.response.data;
-      }
-
-      return {
-        password: "Failed to get response. Please, try again in a few seconds.",
-      };
-    } else {
-      return {
-        password: "Failed to get response. Please, try again in a few seconds.",
-      };
-    }
+  } catch {
+    return {
+      error: "Failed to register",
+    };
   }
 
   redirect("/");
@@ -82,38 +61,26 @@ export async function signOut() {
 
 export async function changePassword(prevState: unknown, formData: FormData) {
   const data = {
-    old_password: formData.get("old_password"),
-    new_password: formData.get("new_password"),
-    new_password_confirm: formData.get("new_password_confirm"),
+    old_password: formData.get("old_password") as string,
+    new_password: formData.get("new_password") as string,
+    new_password_confirm: formData.get("new_password_confirm") as string,
   };
 
   if (data.new_password !== data.new_password_confirm) {
     return {
-      new_password_confirm: "Passwords don't match!",
+      message: "Passwords don't match!",
     };
   }
 
-  console.log(data);
-
   try {
-    await axios.patch("/me/password", data);
-  } catch (err) {
-    if (err instanceof AxiosError) {
-      if (err.response) {
-        return err.response.data;
-      }
-
-      return {
-        new_password: "Failed to get response. Please, try again in a few seconds.",
-      };
-    } else {
-      return {
-        new_password: "Failed to get response. Please, try again in a few seconds.",
-      };
-    }
+    await updatePassword(data.old_password, data.new_password);
+  } catch {
+    return {
+      message: "Failed to get response. Please, try again in a few seconds.",
+    };
   }
 
   return {
-    new_password: "Password updated successfully!",
+    message: "Password updated successfully!",
   };
 }
