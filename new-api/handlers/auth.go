@@ -10,7 +10,7 @@ import (
 
 	"github.com/MisterKirill/blaze/api/config"
 	"github.com/MisterKirill/blaze/api/models"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -27,15 +27,15 @@ func generateRandomString(length int) string {
 	return string(result)
 }
 
-func RegisterHandler(c fiber.Ctx, db *sql.DB, cfg *config.Config) error {
+func RegisterHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 	var body struct {
 		Username string `json:"username"`
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := c.Bind().JSON(&body); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to deserialize body",
+			"error": "Failed to parse body",
 		})
 	}
 
@@ -133,14 +133,14 @@ func RegisterHandler(c fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 	})
 }
 
-func LoginHandler(c fiber.Ctx, db *sql.DB, cfg *config.Config) error {
+func LoginHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 	var body struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	if err := c.Bind().JSON(&body); err != nil {
+	if err := c.BodyParser(&body); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
-			"error": "Failed to deserialize body",
+			"error": "Failed to parse body",
 		})
 	}
 

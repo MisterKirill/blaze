@@ -5,20 +5,20 @@ import (
 
 	"github.com/MisterKirill/blaze/api/config"
 	"github.com/MisterKirill/blaze/api/handlers"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
 func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
-	app.Post("/auth/register", func(c fiber.Ctx) error {
+	app.Post("/auth/register", func(c *fiber.Ctx) error {
 		return handlers.RegisterHandler(c, db, cfg)
 	})
-	app.Post("/auth/login", func(c fiber.Ctx) error {
+	app.Post("/auth/login", func(c *fiber.Ctx) error {
 		return handlers.LoginHandler(c, db, cfg)
 	})
-	app.Get("/users", func(c fiber.Ctx) error {
+	app.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.SearchUsersHandler(c, db)
 	})
-	app.Get("/users/:username", func(c fiber.Ctx) error {
+	app.Get("/users/:username", func(c *fiber.Ctx) error {
 		return handlers.GetUserHandler(c, db)
 	})
 	app.Get("/streams/active", handlers.GetActiveStreamsHandler)

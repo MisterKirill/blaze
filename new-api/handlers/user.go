@@ -6,10 +6,10 @@ import (
 	"strings"
 
 	"github.com/MisterKirill/blaze/api/models"
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func SearchUsersHandler(c fiber.Ctx, db *sql.DB) error {
+func SearchUsersHandler(c *fiber.Ctx, db *sql.DB) error {
 	query := c.Query("query")
 
 	query = strings.ReplaceAll(query, "%", "")
@@ -48,7 +48,7 @@ func SearchUsersHandler(c fiber.Ctx, db *sql.DB) error {
 	})
 }
 
-func GetUserHandler(c fiber.Ctx, db *sql.DB) error {
+func GetUserHandler(c *fiber.Ctx, db *sql.DB) error {
 	username := c.Params("username")
 	if username == "" {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
@@ -75,18 +75,18 @@ func GetUserHandler(c fiber.Ctx, db *sql.DB) error {
 	return c.JSON(user)
 }
 
-func GetMeHandler(c fiber.Ctx) error {
+func GetMeHandler(c *fiber.Ctx) error {
 	return c.SendString("GetMeHandler")
 }
 
-func UpdateMeHandler(c fiber.Ctx) error {
+func UpdateMeHandler(c *fiber.Ctx) error {
 	return c.SendString("UpdateMeHandler")
 }
 
-func FollowUserHandler(c fiber.Ctx) error {
+func FollowUserHandler(c *fiber.Ctx) error {
 	return c.SendString("FollowUserHandler")
 }
 
-func UnfollowUserHandler(c fiber.Ctx) error {
+func UnfollowUserHandler(c *fiber.Ctx) error {
 	return c.SendString("UnfollowUserHandler")
 }
