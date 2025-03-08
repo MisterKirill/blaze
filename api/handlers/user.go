@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -75,8 +76,17 @@ func GetUserHandler(c *fiber.Ctx, db *sql.DB) error {
 	return c.JSON(user)
 }
 
-func GetMeHandler(c *fiber.Ctx) error {
-	return c.SendString("GetMeHandler")
+func GetMeHandler(c *fiber.Ctx, db *sql.DB) error {
+	user := c.Locals("user").(models.User)
+	authorizedUser := models.AuthorizedUser{
+		Username: user.Username,
+		Email: user.Email,
+		Bio: user.Bio,
+		DisplayName: user.DisplayName,
+		StreamName: user.StreamName,
+		StreamKey: fmt.Sprintf("%d?k=%s", user.ID, user.StreamKey),
+	}
+	return c.JSON(authorizedUser)
 }
 
 func UpdateMeHandler(c *fiber.Ctx) error {

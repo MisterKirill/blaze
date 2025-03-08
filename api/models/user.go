@@ -20,3 +20,12 @@ type SafeUser struct {
 	DisplayName *string `json:"display_name"`
 	StreamName  *string `json:"stream_name"`
 }
+
+type AuthorizedUser struct {
+	Username    string  `json:"username"`
+	Email       string  `json:"email"`
+	Bio         *string `json:"bio"`
+	DisplayName *string `json:"display_name"`
+	StreamName  *string `json:"stream_name"`
+	StreamKey   string  `json:"stream_key"`
+}

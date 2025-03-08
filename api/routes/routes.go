@@ -5,6 +5,7 @@ import (
 
 	"github.com/MisterKirill/blaze/api/config"
 	"github.com/MisterKirill/blaze/api/handlers"
+	"github.com/MisterKirill/blaze/api/middleware"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -21,14 +22,16 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 	app.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.SearchUsersHandler(c, db)
 	})
+	app.Get("/users/me", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
+		return handlers.GetMeHandler(c, db)
+	})
+	app.Put("/users/me", handlers.UpdateMeHandler)
 	app.Get("/users/:username", func(c *fiber.Ctx) error {
 		return handlers.GetUserHandler(c, db)
 	})
 	app.Get("/streams/active", func(c *fiber.Ctx) error {
 		return handlers.GetActiveStreamsHandler(c, db, cfg)
 	})
-	app.Get("/users/me", handlers.GetMeHandler)
-	app.Put("/users/me", handlers.UpdateMeHandler)
 	app.Post("/users/:username/follow", handlers.FollowUserHandler)
 	app.Post("/users/:username/unfollow", handlers.UnfollowUserHandler)
 	app.Get("/users/:username/chat", handlers.WebSocketChatHandler)
