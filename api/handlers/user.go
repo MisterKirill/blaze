@@ -147,10 +147,66 @@ func UpdateMeHandler(c *fiber.Ctx, db *sql.DB) error {
 	return c.JSON(safeUser)
 }
 
-func FollowUserHandler(c *fiber.Ctx) error {
-	return c.SendString("FollowUserHandler")
+func FollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
+	user := c.Locals("user").(models.User)
+	targetUsername := c.Params("username")
+
+	if user.Username == targetUsername {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"error": "You can't follow yourself",
+		})
+	}
+
+	var targetID int
+	err := db.QueryRow("SELECT id FROM users WHERE username = $1", targetUsername).Scan(&targetID)
+	if err == sql.ErrNoRows {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "User not found",
+		})
+	} else if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get user",
+		})
+	}
+
+	_, err = db.Exec("INSERT INTO follows (follower_id, follows_id) VALUES ($1, $2)", user.ID, targetID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to follow",
+		})
+	}
+
+	return c.SendStatus(fiber.StatusCreated)
 }
 
-func UnfollowUserHandler(c *fiber.Ctx) error {
-	return c.SendString("UnfollowUserHandler")
+func UnfollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
+	user := c.Locals("user").(models.User)
+	targetUsername := c.Params("username")
+
+	if user.Username == targetUsername {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+			"error": "You can't unfollow yourself",
+		})
+	}
+
+	var targetID int
+	err := db.QueryRow("SELECT id FROM users WHERE username = $1", targetUsername).Scan(&targetID)
+	if err == sql.ErrNoRows {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": "User not found",
+		})
+	} else if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to get user",
+		})
+	}
+
+	_, err = db.Exec("DELETE FROM follows WHERE follower_id = $1 AND follows_id = $2", user.ID, targetID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to unfollow",
+		})
+	}
+
+	return c.SendStatus(fiber.StatusOK)
 }

@@ -34,7 +34,11 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 	app.Get("/streams/active", func(c *fiber.Ctx) error {
 		return handlers.GetActiveStreamsHandler(c, db, cfg)
 	})
-	app.Post("/users/:username/follow", handlers.FollowUserHandler)
-	app.Post("/users/:username/unfollow", handlers.UnfollowUserHandler)
+	app.Post("/users/:username/follow", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
+		return handlers.FollowUserHandler(c, db)
+	})
+	app.Post("/users/:username/unfollow", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
+		return handlers.UnfollowUserHandler(c, db)
+	})
 	app.Get("/users/:username/chat", handlers.WebSocketChatHandler)
 }

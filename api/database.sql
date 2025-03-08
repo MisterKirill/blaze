@@ -16,5 +16,6 @@ CREATE TABLE IF NOT EXISTS follows (
   follower_id INT,
   follows_id INT,
   FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (follows_id) REFERENCES users(id) ON DELETE CASCADE
+  FOREIGN KEY (follows_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE (follower_id, follows_id)
 );
