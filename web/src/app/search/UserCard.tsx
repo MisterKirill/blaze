@@ -1,7 +1,7 @@
-import { SearchUser } from "@/lib/users";
+import { User } from "@/lib/api";
 import Link from "next/link";
 
-export default function SearchUserCard({ user }: { user: SearchUser }) {
+export default function SearchUserCard({ user }: { user: User }) {
   return (
     <Link href={`/${user.username}`} className="flex flex-col p-4 bg-slate-800 rounded-xl hover:bg-slate-700">
       {user.display_name && (

@@ -4,10 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import Button from "./ui/Button";
 import { useState } from "react";
-import { getMe } from "@/lib/api";
-import { Radio, Settings, UserRound } from "lucide-react";
+import { Settings, UserRound } from "lucide-react";
 
-export default function Header({ user }: { user: User | null }) {
+export default function Header({ username }: { username?: string }) {
   const [menuOpened, setMenuOpened] = useState(false);
 
   const switchMenuOpened = () => setMenuOpened((menuOpened) => !menuOpened);
@@ -15,11 +14,11 @@ export default function Header({ user }: { user: User | null }) {
   return (
     <>
       <header className="flex container py-6 items-center justify-between">
-        <Link href="/">
+        <Link href="/" className="min-w-30">
           <Image
             src="/big_logo.svg"
             alt="Blaze logo"
-            className="h-5 w-auto hover:opacity-85"
+            className="max-w-30 w-full hover:opacity-85"
             width={0}
             height={0}
             priority
@@ -36,15 +35,12 @@ export default function Header({ user }: { user: User | null }) {
           />
         </form>
 
-        {user ? (
+        {username ? (
           <div className="hidden md:flex gap-2 text-slate-300">
-            <Link href="/settings" className="hover:bg-slate-800 p-2 rounded-lg">
+            <Link href="/settings" className="hover:bg-slate-800 p-2 rounded-lg" title="Settings">
               <Settings size={25} />
             </Link>
-            <Link href="/dashboard" className="hover:bg-slate-800 p-2 rounded-lg">
-              <Radio size={25} />
-            </Link>
-            <Link href={`/${user.username}`} className="hover:bg-slate-800 p-2 rounded-lg">
+            <Link href={`/${username}`} className="hover:bg-slate-800 p-2 rounded-lg" title="Your profile">
               <UserRound size={25} />
             </Link>
           </div>
@@ -105,15 +101,12 @@ export default function Header({ user }: { user: User | null }) {
             />
           </form>
 
-          {user ? (
+          {username ? (
             <div className="flex gap-2 text-slate-300">
               <Link href="/settings" className="hover:bg-slate-800 p-2 rounded-lg">
                 <Settings size={25} />
               </Link>
-              <Link href="/dashboard" className="hover:bg-slate-800 p-2 rounded-lg">
-                <Radio size={25} />
-              </Link>
-              <Link href={`/${user.username}`} className="hover:bg-slate-800 p-2 rounded-lg">
+              <Link href={`/${username}`} className="hover:bg-slate-800 p-2 rounded-lg">
                 <UserRound size={25} />
               </Link>
             </div>

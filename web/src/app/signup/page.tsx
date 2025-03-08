@@ -1,6 +1,6 @@
-import SignupForm from "@/components/forms/SignupForm";
+import SignupForm from "./SignupForm";
 import TextLink from "@/components/ui/TextLink";
-import { getUser } from "@/lib/auth";
+import { getUsername } from "@/lib/auth";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Signup() {
-  const user = await getUser();
+  const username = await getUsername();
 
-  if (user) {
+  if (username) {
     redirect("/");
   }
 

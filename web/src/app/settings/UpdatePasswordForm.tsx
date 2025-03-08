@@ -1,14 +1,12 @@
 "use client";
 
 import { useActionState } from "react";
-import Button from "../ui/Button";
-import Input from "../ui/Input";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import { changePassword } from "@/app/actions";
 
 const defaultState = {
-  old_password: "",
-  new_password: "",
-  new_password_confirm: "",
+  error: "",
 };
 
 export default function UpdatePasswordForm() {
@@ -28,9 +26,6 @@ export default function UpdatePasswordForm() {
           minLength={8}
           required
         />
-        {state.old_password && (
-          <span className="font-semibold text-sm">{state.old_password}</span>
-        )}
       </div>
 
       <div className="flex flex-col gap-1 text-left mb-4">
@@ -45,9 +40,6 @@ export default function UpdatePasswordForm() {
           minLength={8}
           required
         />
-        {state.new_password && (
-          <span className="font-semibold text-sm">{state.new_password}</span>
-        )}
       </div>
 
       <div className="flex flex-col gap-1 text-left mb-4">
@@ -62,10 +54,9 @@ export default function UpdatePasswordForm() {
           minLength={8}
           required
         />
-        {state.new_password_confirm && (
-          <span className="font-semibold text-sm">{state.new_password_confirm}</span>
-        )}
       </div>
+
+      {state.error && <p className="font-semibold text-sm mb-4 text-left">{state.error}</p>}
 
       <Button type="submit" className="w-full" disabled={pending}>
         Update

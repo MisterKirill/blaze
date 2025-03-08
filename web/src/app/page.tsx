@@ -1,7 +1,7 @@
 import StreamCard from "@/components/StreamCard";
 import Button from "@/components/ui/Button";
-import { getUser } from "@/lib/auth";
-import { getStreams } from "@/lib/streams";
+import { getUsername } from "@/lib/auth";
+import { getStreams } from "@/lib/api";
 import { Radio } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const user = await getUser();
-  const streams = await getStreams();
+  // const user = await getUsername();
+  // const streams = await getStreams();
 
   return (
     <>
-      <div className="flex items-center gap-4 mb-4">
+      {/* <div className="flex items-center gap-4 mb-4">
         <Radio size={40} />
         <h1 className="font-semibold text-3xl">Active streams</h1>
       </div>
@@ -43,7 +43,7 @@ export default async function Home() {
             <Button>Sign Up</Button>
           </Link>
         </div>
-      )}
+      )} */}
     </>
   );
 }

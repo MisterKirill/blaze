@@ -1,5 +1,5 @@
-import SearchUserCard from "@/components/SearchUserCard";
-import { SearchUser, searchUsers } from "@/lib/api";
+import SearchUserCard from "./UserCard";
+import { searchUsers, User } from "@/lib/api";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,16 +12,14 @@ export default async function Search({
   searchParams: Promise<{ query: string | undefined }>;
 }) {
   const query = (await searchParams).query;
-
   if (!query) {
     return <span>No search query provided!</span>;
   }
 
-  let users: SearchUser[] = [];
+  const res = await searchUsers(query);
+  const { users } = (await res.json()) as { users: User[] };
 
-  try {
-    users = await searchUsers(query);
-  } catch {
+  if (res.status !== 200) {
     return <span>Failed to search users. Please, try again in a few seconds.</span>;
   }
 

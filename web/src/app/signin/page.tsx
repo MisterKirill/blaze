@@ -1,6 +1,6 @@
-import SigninForm from "@/components/forms/SigninForm";
+import SigninForm from "./SigninForm";
 import TextLink from "@/components/ui/TextLink";
-import { getUser } from "@/lib/auth";
+import { getUsername } from "@/lib/auth";
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 
@@ -10,9 +10,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Signin() {
-  const user = await getUser();
+  const username = await getUsername();
 
-  if (user) {
+  if (username) {
     redirect("/");
   }
 

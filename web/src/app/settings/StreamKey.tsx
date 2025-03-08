@@ -11,8 +11,8 @@ export default function StreamKey({ streamKey }: { streamKey: string }) {
   };
 
   return (
-    <div className="flex gap-3">
-      <span className="p-3 bg-slate-800 rounded-lg font-semibold">
+    <div className="flex flex-col sm:flex-row gap-3">
+      <span className="p-3 bg-slate-800 rounded-lg font-semibold select-all break-all">
         {keyHidden ? streamKey.replace(/./g, "*") : streamKey}
       </span>
       <Button onClick={() => setKeyHidden((keyHidden) => !keyHidden)}>

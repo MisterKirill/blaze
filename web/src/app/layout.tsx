@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import { getUser } from "@/lib/auth";
+import { getUsername } from "@/lib/auth";
 import Footer from "@/components/Footer";
 import ProgressBar from "@/components/ProgressBar";
 
@@ -20,7 +20,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await getUser();
+  const username = await getUsername();
 
   return (
     <html lang="en">
@@ -28,7 +28,7 @@ export default async function RootLayout({
         <ProgressBar />
 
         <div className="flex flex-col h-screen">
-          <Header user={user} />
+          <Header username={username} />
           <main className="container mt-4 mb-24 grow">{children}</main>
           <Footer />
         </div>
