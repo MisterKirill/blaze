@@ -4,23 +4,25 @@ services:
   api:
     build: .
     restart: always
+    depends_on:
+      - postgres
+      - mediamtx
     ports:
       - 8080:8080
-    env_file:
-      - .env
-    environment:
-      - DATABASE_URL=postgres://postgres:postgres@postgres/postgres
-      - MEDIAMTX_API_URL=http://mediamtx:9997
-  
+    networks:
+      - backend
+
   postgres:
-    image: postgres
+    image: postgres:16-alpine
     restart: always
     shm_size: 128mb
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
-  
+    networks:
+      - backend
+
   mediamtx:
     image: bluenviron/mediamtx
     restart: always
@@ -29,3 +31,11 @@ services:
       - 8888:8888
     volumes:
       - ./mediamtx.yml:/mediamtx.yml
+    networks:
+      - backend
+
+volumes:
+  postgres-data:
+
+networks:
+  backend:

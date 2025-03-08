@@ -5,9 +5,8 @@
 
 ## Project Directories
 
-- api – Back-end services (Go).
-- new-api – Experimental API created with Go & Fiber.
-- web – Front-end application (Next.JS).
+- api – Blaze API created with Go & Fiber.
+- web – Front-end application created with Next.JS.
 - mediamtx – Go module for easy and fast access to the MediaMTX API.
 - assets – Branding resources.
 

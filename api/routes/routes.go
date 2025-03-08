@@ -1,21 +1,35 @@
 package routes
 
-import "github.com/go-chi/chi/v5"
+import (
+	"database/sql"
 
-func InitRoutes(r *chi.Mux) {
-	r.Post("/auth/login", Login)
-	r.Post("/auth/register", Register)
-	r.Post("/auth/mediamtx", AuthMediamtx)
+	"github.com/MisterKirill/blaze/api/config"
+	"github.com/MisterKirill/blaze/api/handlers"
+	"github.com/gofiber/fiber/v2"
+)
 
-	r.Get("/users/{username}", GetUser)
-	r.Get("/users", SearchUsers)
-
-	r.Get("/streams", GetStreams)
-
-	r.Group(func(r chi.Router) {
-		r.Use(AuthMiddleware)
-		r.Get("/me", GetMe)
-		r.Put("/me", UpdateMe)
-		r.Patch("/me/password", UpdatePassword)
+func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
+	app.Post("/auth/register", func(c *fiber.Ctx) error {
+		return handlers.RegisterHandler(c, db, cfg)
 	})
+	app.Post("/auth/login", func(c *fiber.Ctx) error {
+		return handlers.LoginHandler(c, db, cfg)
+	})
+	app.Post("/auth/mediamtx", func(c *fiber.Ctx) error {
+		return handlers.MediaMTXAuthHandler(c)
+	})
+	app.Get("/users", func(c *fiber.Ctx) error {
+		return handlers.SearchUsersHandler(c, db)
+	})
+	app.Get("/users/:username", func(c *fiber.Ctx) error {
+		return handlers.GetUserHandler(c, db)
+	})
+	app.Get("/streams/active", func(c *fiber.Ctx) error {
+		return handlers.GetActiveStreamsHandler(c, db, cfg)
+	})
+	app.Get("/users/me", handlers.GetMeHandler)
+	app.Put("/users/me", handlers.UpdateMeHandler)
+	app.Post("/users/:username/follow", handlers.FollowUserHandler)
+	app.Post("/users/:username/unfollow", handlers.UnfollowUserHandler)
+	app.Get("/users/:username/chat", handlers.WebSocketChatHandler)
 }

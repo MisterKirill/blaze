@@ -1,35 +1,31 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"net/http"
 
-	"github.com/MisterKirill/blaze/api/db"
+	"github.com/MisterKirill/blaze/api/config"
+	"github.com/MisterKirill/blaze/api/database"
 	"github.com/MisterKirill/blaze/api/routes"
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/cors"
-	"github.com/joho/godotenv"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Failed to load .env")
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatalf("Failed to load config: %v", err)
 	}
 
-	db.InitDB()
+	db, err := database.InitDatabase(cfg)
+	if err != nil {
+		log.Fatalf("Failed to connect database: %v", err)
+	}
+	
+	app := fiber.New()
+	app.Use(logger.New())
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Recoverer)
-	r.Use(middleware.SetHeader("Content-Type", "application/json"))
-	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"http://localhost:3000"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-	}))
+	routes.SetupRoutes(app, db, cfg)
 
-	routes.InitRoutes(r)
-
-	log.Println("Starting server on port 8080")
-	http.ListenAndServe(":8080", r)
+	app.Listen(fmt.Sprintf(":%d", cfg.Port))
 }
