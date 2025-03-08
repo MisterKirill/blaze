@@ -8,7 +8,7 @@
     "dbname": "postgres"
   },
   "mediamtx": {
-    "hls_url": "http://mediamtx:8888",
+    "hls_url": "http://localhost:8888",
     "api_url": "http://mediamtx:9997"
   },
   "jwt_secret": "samplesecret"

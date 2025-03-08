@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/MisterKirill/blaze/api/config"
@@ -25,24 +26,36 @@ func GetActiveStreamsHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error
 		})
 	}
 
-	var streams = make([]models.ActiveStream, 0)
+	var activeStreams = make([]models.ActiveStream, 0)
 
 	for _, path := range paths.Items {
-		username := path.Name[5:]
+		id := path.Name[5:]
 
 		var user models.SafeUser
 		err := db.QueryRow(
-			"SELECT username, bio, display_name, stream_name FROM users WHERE username = $1",
-			username,
+			"SELECT username, bio, display_name, stream_name FROM users WHERE id = $1",
+			id,
 		).Scan(&user.Username, &user.Bio, &user.DisplayName, &user.StreamName)
 		if err != nil {
 			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Failed to get user",
 			})
 		}
+
+		streamUrl := fmt.Sprintf("%s/live/%s/index.m3u8", cfg.MediaMTX.HLSUrl, id)
+		viewersCount := len(path.Readers)
+
+		activeStream := models.ActiveStream{
+			Url: streamUrl,
+			ViewersCount: viewersCount,
+			ReadyTime: path.ReadyTime,
+			User: user,
+		}
+
+		activeStreams = append(activeStreams, activeStream)
 	}
 
 	return c.JSON(fiber.Map{
-		"streams": streams,
+		"active_streams": activeStreams,
 	})
 }
