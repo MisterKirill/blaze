@@ -4,12 +4,16 @@ go 1.24.0
 
 require (
 	github.com/MisterKirill/blaze/mediamtx v0.0.0-20250308094943-a4f125f1184a
+	github.com/gofiber/contrib/websocket v1.3.3
 	github.com/gofiber/fiber/v2 v2.52.6
 )
 
 require (
+	github.com/fasthttp/websocket v1.5.8 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/savsgio/gotils v0.0.0-20240303185622-093b76447511 // indirect
+	golang.org/x/net v0.35.0 // indirect
 )
 
 require (

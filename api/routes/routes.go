@@ -6,6 +6,7 @@ import (
 	"github.com/MisterKirill/blaze/api/config"
 	"github.com/MisterKirill/blaze/api/handlers"
 	"github.com/MisterKirill/blaze/api/middleware"
+	"github.com/gofiber/contrib/websocket"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -40,5 +41,7 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 	app.Post("/users/:username/unfollow", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
 		return handlers.UnfollowUserHandler(c, db)
 	})
-	app.Get("/users/:username/chat", handlers.WebSocketChatHandler)
+	app.Get("/users/:username/chat", middleware.JwtMiddleware(db, cfg), websocket.New(func(c *websocket.Conn) {
+		handlers.WebSocketChatHandler(c, db)
+	}))
 }
