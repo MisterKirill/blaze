@@ -25,7 +25,9 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 	app.Get("/users/me", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
 		return handlers.GetMeHandler(c, db)
 	})
-	app.Put("/users/me", handlers.UpdateMeHandler)
+	app.Put("/users/me", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
+		return handlers.UpdateMeHandler(c, db)
+	})
 	app.Get("/users/:username", func(c *fiber.Ctx) error {
 		return handlers.GetUserHandler(c, db)
 	})
