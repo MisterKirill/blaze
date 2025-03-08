@@ -8,6 +8,13 @@ export interface User {
   stream_name: string | null;
 }
 
+export interface Stream {
+  url: string;
+  viewers_count: number;
+  ready_time: string;
+  user: User;
+}
+
 export async function register(username: string, password: string, email: string) {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
     method: "POST",

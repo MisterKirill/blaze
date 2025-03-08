@@ -1,4 +1,4 @@
-import { StreamInfo } from "@/lib/streams";
+import { Stream } from "@/lib/api";
 import moment from "moment";
 import Link from "next/link";
 
@@ -10,19 +10,23 @@ function convertNumber(n: number): string {
   else return n.toString();
 }
 
-export default function StreamCard({ stream }: { stream: StreamInfo }) {
+export default function StreamCard({ stream }: { stream: Stream }) {
   return (
-    <Link href={`/${stream.username}`} className="flex flex-col p-4 bg-slate-800 rounded-xl hover:bg-slate-700">
-      {stream.stream_name && (
-        <span className="text-slate-200 font-bold text-xl">{stream.stream_name}</span>
+    <Link
+      href={`/${stream.user.username}`}
+      className="flex flex-col p-4 bg-slate-800 rounded-xl hover:bg-slate-700"
+    >
+      {stream.user.stream_name && (
+        <span className="text-slate-200 font-bold text-xl">{stream.user.stream_name}</span>
       )}
-      
+
       <span className="text-slate-400 font-medium">
-        {convertNumber(stream.viewers_count)} viewer{stream.viewers_count != 1 && "s"} • {moment(stream.stream_ready_time).fromNow()}
+        {convertNumber(stream.viewers_count)} viewer{stream.viewers_count != 1 && "s"} •{" "}
+        {moment(stream.ready_time).fromNow()}
       </span>
 
       <span className="text-slate-400 font-medium">
-        {stream.display_name ? stream.display_name : `@${stream.username}`}
+        {stream.user.display_name ? stream.user.display_name : `@${stream.user.username}`}
       </span>
     </Link>
   );
