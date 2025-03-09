@@ -3,12 +3,14 @@ package handlers
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"net/mail"
 	"strings"
 
 	"github.com/MisterKirill/blaze/api/models"
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func SearchUsersHandler(c *fiber.Ctx, db *sql.DB) error {
@@ -94,10 +96,11 @@ func UpdateMeHandler(c *fiber.Ctx, db *sql.DB) error {
 	user := c.Locals("user").(models.User)
 
 	var body struct {
-		Email       string  `json:"email"`
+		Email       *string `json:"email"`
 		Bio         *string `json:"bio"`
 		DisplayName *string `json:"display_name"`
 		StreamName  *string `json:"stream_name"`
+		Password    *string `json:"password"`
 	}
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -105,40 +108,75 @@ func UpdateMeHandler(c *fiber.Ctx, db *sql.DB) error {
 		})
 	}
 
-	if _, err := mail.ParseAddress(body.Email); err != nil {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"error": "Invalid email format",
-		})
+	if body.Email != nil {
+		if _, err := mail.ParseAddress(*body.Email); err != nil {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "Invalid email format",
+			})
+		}
+
+		user.Email = *body.Email
 	}
 
-	if body.Bio != nil && len(*body.Bio) > 1000 {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"error": "Bio must be in between 1 and 1000 characters",
-		})
+	if body.Bio != nil {
+		if len(*body.Bio) > 1000 {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "Bio must be at most 1000 characters",
+			})
+		}
+
+		user.Bio = body.Bio
 	}
 
-	if body.DisplayName != nil && len(*body.DisplayName) > 50 {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"error": "Display name must be in between 1 and 50 characters",
-		})
+	if body.DisplayName != nil {
+		if len(*body.DisplayName) > 50 {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "Display name must be at most 50 characters",
+			})
+		}
+
+		user.DisplayName = body.DisplayName
 	}
 
-	if body.StreamName != nil && len(*body.StreamName) > 50 {
-		return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-			"error": "Stream name must be in between 1 and 50 characters",
-		})
+	if body.StreamName != nil {
+		if len(*body.StreamName) > 50 {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "Stream name must be at most 50 characters",
+			})
+		}
+
+		user.StreamName = body.StreamName
+	}
+
+	if body.Password != nil {
+		if len(*body.Password) < 8 {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "Password must be at least 8 characters",
+			})
+		}
+
+		passwordHash, err := bcrypt.GenerateFromPassword([]byte(*body.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Failed to hash password",
+			})
+		}
+
+		user.Password = string(passwordHash)
 	}
 
 	var safeUser models.SafeUser
 	err := db.QueryRow(
-		"UPDATE users SET email = $1, bio = $2, display_name = $3, stream_name = $4 WHERE id = $5 RETURNING username, bio, display_name, stream_name",
-		body.Email,
-		body.Bio,
-		body.DisplayName,
-		body.StreamName,
+		"UPDATE users SET email = $1, bio = $2, display_name = $3, stream_name = $4, password = $5 WHERE id = $6 RETURNING username, bio, display_name, stream_name",
+		user.Email,
+		user.Bio,
+		user.DisplayName,
+		user.StreamName,
+		user.Password,
 		user.ID,
 	).Scan(&safeUser.Username, &safeUser.Bio, &safeUser.DisplayName, &safeUser.StreamName)
 	if err != nil {
+		log.Print(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to update user",
 		})
