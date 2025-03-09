@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/mail"
 	"regexp"
+	"strings"
 	"time"
 
 	"github.com/MisterKirill/blaze/api/config"
@@ -72,7 +73,9 @@ func RegisterHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 	var exists bool
 	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE username = $1)", body.Username).Scan(&exists)
 	if err != nil {
-		return err
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to check username",
+		})
 	}
 	if exists {
 		return c.Status(http.StatusConflict).JSON(fiber.Map{
@@ -82,7 +85,9 @@ func RegisterHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 
 	err = db.QueryRow("SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)", body.Email).Scan(&exists)
 	if err != nil {
-		return err
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to check email",
+		})
 	}
 	if exists {
 		return c.Status(http.StatusConflict).JSON(fiber.Map{
@@ -194,6 +199,45 @@ func LoginHandler(c *fiber.Ctx, db *sql.DB, cfg *config.Config) error {
 	})
 }
 
-func MediaMTXAuthHandler(c *fiber.Ctx) error {
-	return c.SendString("MediaMTXAuthHandler")
+func MediaMTXAuthHandler(c *fiber.Ctx, db *sql.DB) error {
+	var body struct {
+		Path  string `json:"path"`
+		Query string `json:"query"`
+	}
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse body",
+		})
+	}
+
+	if len(body.Path) < 6 {
+		return c.Status(http.StatusUnprocessableEntity).JSON(fiber.Map{
+			"error": "Invalid path",
+		})
+	}
+
+	if len(body.Query) < 3 {
+		return c.Status(http.StatusUnprocessableEntity).JSON(fiber.Map{
+			"error": "Invalid query",
+		})
+	}
+
+	username := strings.TrimPrefix(body.Path, "live/")
+	key := strings.TrimPrefix(body.Query, "k=")
+
+	var exists bool
+	err := db.QueryRow("SELECT EXISTS(SELECT 1 FROM USERS WHERE username = $1 AND stream_key = $2)", username, key).Scan(&exists)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to check username",
+		})
+	}
+
+	if !exists {
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid username or stream key",
+		})
+	}
+
+	return c.SendStatus(fiber.StatusOK)
 }

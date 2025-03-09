@@ -230,7 +230,7 @@ func UnfollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func UpdatePassword(c *fiber.Ctx, db *sql.DB) error {
+func UpdatePasswordHandler(c *fiber.Ctx, db *sql.DB) error {
 	user := c.Locals("user").(models.User)
 
 	var body struct {

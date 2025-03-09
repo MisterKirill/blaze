@@ -18,7 +18,7 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 		return handlers.LoginHandler(c, db, cfg)
 	})
 	app.Post("/auth/mediamtx", func(c *fiber.Ctx) error {
-		return handlers.MediaMTXAuthHandler(c)
+		return handlers.MediaMTXAuthHandler(c, db)
 	})
 	app.Get("/users", func(c *fiber.Ctx) error {
 		return handlers.SearchUsersHandler(c, db)
@@ -30,7 +30,7 @@ func SetupRoutes(app *fiber.App, db *sql.DB, cfg *config.Config) {
 		return handlers.UpdateMeHandler(c, db)
 	})
 	app.Put("/users/me/password", middleware.JwtMiddleware(db, cfg), func(c *fiber.Ctx) error {
-		return handlers.UpdatePassword(c, db)
+		return handlers.UpdatePasswordHandler(c, db)
 	})
 	app.Get("/users/:username", func(c *fiber.Ctx) error {
 		return handlers.GetUserHandler(c, db)
