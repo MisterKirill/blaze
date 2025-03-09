@@ -1,11 +1,11 @@
 "use server";
 
-import { signin, signup, updateMe } from "@/lib/api";
+import { signin, signup, updateMe, updatePassword } from "@/lib/api";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function signIn(prevState: unknown, formData: FormData) {
+export async function signInAction(prevState: unknown, formData: FormData) {
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -26,7 +26,7 @@ export async function signIn(prevState: unknown, formData: FormData) {
   redirect("/");
 }
 
-export async function signUp(prevState: unknown, formData: FormData) {
+export async function signUpAction(prevState: unknown, formData: FormData) {
   const data = {
     username: formData.get("username") as string,
     email: formData.get("email") as string,
@@ -55,12 +55,12 @@ export async function signUp(prevState: unknown, formData: FormData) {
   redirect("/");
 }
 
-export async function signOut() {
+export async function signOutAction() {
   (await cookies()).delete("token");
   redirect("/signin");
 }
 
-export async function updateProfile(prevState: unknown, formData: FormData) {
+export async function updateProfileAction(prevState: unknown, formData: FormData) {
   const data = {
     bio: formData.get("bio") as string,
     display_name: formData.get("display_name") as string,
@@ -82,7 +82,7 @@ export async function updateProfile(prevState: unknown, formData: FormData) {
   };
 }
 
-export async function updatePassword(prevState: unknown, formData: FormData) {
+export async function updatePasswordAction(prevState: unknown, formData: FormData) {
   const data = {
     old_password: formData.get("old_password") as string,
     new_password: formData.get("new_password") as string,
@@ -95,9 +95,15 @@ export async function updatePassword(prevState: unknown, formData: FormData) {
     };
   }
 
-  // TODO
+  const res = await updatePassword(data.old_password, data.new_password);
+
+  if (res.status !== 200) {
+    return {
+      error: "Failed to update password",
+    };
+  }
 
   return {
-    error: "To be implemented",
+    error: "Password updated successfully",
   };
 }

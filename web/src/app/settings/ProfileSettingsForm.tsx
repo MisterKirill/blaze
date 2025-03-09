@@ -3,7 +3,7 @@
 import { useActionState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { updateProfile } from "@/app/actions";
+import { updateProfileAction } from "@/app/actions";
 import { Me } from "@/lib/api";
 
 const defaultState = {
@@ -11,7 +11,7 @@ const defaultState = {
 };
 
 export default function ProfileSettingsForm({ me }: { me: Me }) {
-  const [state, formAction, pending] = useActionState(updateProfile, defaultState);
+  const [state, formAction, pending] = useActionState(updateProfileAction, defaultState);
 
   return (
     <form action={formAction} className="max-w-[30rem]">

@@ -3,14 +3,14 @@
 import { useActionState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { updatePassword } from "@/app/actions";
+import { updatePasswordAction } from "@/app/actions";
 
 const defaultState = {
   error: "",
 };
 
 export default function PasswordForm() {
-  const [state, formAction, pending] = useActionState(updatePassword, defaultState);
+  const [state, formAction, pending] = useActionState(updatePasswordAction, defaultState);
 
   return (
     <form action={formAction} className="max-w-[30rem]">

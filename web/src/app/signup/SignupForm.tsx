@@ -3,14 +3,14 @@
 import { useActionState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
-import { signUp } from "@/app/actions";
+import { signUpAction } from "@/app/actions";
 
 const defaultState = {
   error: "",
 };
 
 export default function SignupForm() {
-  const [state, formAction, pending] = useActionState(signUp, defaultState);
+  const [state, formAction, pending] = useActionState(signUpAction, defaultState);
 
   return (
     <form action={formAction} className="max-w-[30rem] mx-auto">

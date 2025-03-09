@@ -1,6 +1,6 @@
 import Button from "@/components/ui/Button";
 import { Metadata } from "next";
-import { signOut } from "../actions";
+import { signOutAction } from "../actions";
 import { redirect } from "next/navigation";
 import StreamKey from "./StreamKey";
 import { getMe } from "@/lib/api";
@@ -34,7 +34,7 @@ export default async function Settings() {
       <PasswordForm />
 
       <h2 className="mb-4 text-2xl font-bold mt-8">Danger Zone</h2>
-      <Button className="bg-red-500 hover:bg-red-600" onClick={signOut}>
+      <Button className="bg-red-500 hover:bg-red-600" onClick={signOutAction}>
         Sign out
       </Button>
     </>

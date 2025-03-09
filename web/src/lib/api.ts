@@ -73,8 +73,7 @@ export async function updateMe(
   email?: string,
   bio?: string,
   display_name?: string,
-  stream_name?: string,
-  password?: string
+  stream_name?: string
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) {
@@ -92,7 +91,25 @@ export async function updateMe(
       bio,
       display_name,
       stream_name,
-      password,
+    }),
+  });
+}
+
+export async function updatePassword(old_password: string, new_password: string) {
+  const token = (await cookies()).get("token")?.value;
+  if (!token) {
+    redirect("/signin");
+  }
+
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/password`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      old_password,
+      new_password,
     }),
   });
 }
