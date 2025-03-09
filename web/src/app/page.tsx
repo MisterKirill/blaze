@@ -14,7 +14,7 @@ export default async function Home() {
   const user = await getUsername();
 
   const res = await getActiveStreams();
-  const { streams } = (await res.json()) as { streams: Stream[] };
+  const { active_streams } = (await res.json()) as { active_streams: Stream[] };
 
   let failed = false;
 
@@ -33,10 +33,10 @@ export default async function Home() {
         {failed ? (
           <p>Failed to load active streams, please try again in a few seconds.</p>
         ) : (
-          streams.length == 0 ? (
+          active_streams.length == 0 ? (
             <p>No one is streaming right now. Be the first!</p>
           ) : (
-            streams.map((stream, i) => <StreamCard key={i} stream={stream} />)
+            active_streams.map((stream, i) => <StreamCard key={i} stream={stream} />)
           )
         )}
       </div>

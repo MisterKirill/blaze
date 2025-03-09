@@ -8,6 +8,15 @@ export interface User {
   stream_name: string | null;
 }
 
+export interface Me {
+  username: string;
+  email: string;
+  bio: string | null;
+  display_name: string | null;
+  stream_name: string | null;
+  stream_key: string;
+}
+
 export interface Stream {
   url: string;
   viewers_count: number;
@@ -15,7 +24,7 @@ export interface Stream {
   user: User;
 }
 
-export async function register(username: string, password: string, email: string) {
+export async function signup(username: string, password: string, email: string) {
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
     method: "POST",
     headers: {
@@ -25,8 +34,8 @@ export async function register(username: string, password: string, email: string
   });
 }
 
-export async function login(email: string, password: string) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+export async function signin(email: string, password: string) {
+  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -50,7 +59,7 @@ export async function getActiveStreams() {
 export async function getMe() {
   const token = (await cookies()).get("token")?.value;
   if (!token) {
-    redirect("/login");
+    redirect("/signin");
   }
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
@@ -61,18 +70,19 @@ export async function getMe() {
 }
 
 export async function updateMe(
-  email: string,
-  bio: string,
-  display_name: string,
-  stream_name: string
+  email?: string,
+  bio?: string,
+  display_name?: string,
+  stream_name?: string,
+  password?: string
 ) {
   const token = (await cookies()).get("token")?.value;
   if (!token) {
-    redirect("/login");
+    redirect("/signin");
   }
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-    method: "PUT",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -82,6 +92,7 @@ export async function updateMe(
       bio,
       display_name,
       stream_name,
+      password,
     }),
   });
 }
@@ -89,7 +100,7 @@ export async function updateMe(
 export async function follow(username: string) {
   const token = (await cookies()).get("token")?.value;
   if (!token) {
-    redirect("/login");
+    redirect("/signin");
   }
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/follow`, {
@@ -103,7 +114,7 @@ export async function follow(username: string) {
 export async function unfollow(username: string) {
   const token = (await cookies()).get("token")?.value;
   if (!token) {
-    redirect("/login");
+    redirect("/signin");
   }
 
   return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/unfollow`, {
