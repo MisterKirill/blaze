@@ -61,7 +61,7 @@ func JwtMiddleware(db *sql.DB, cfg *config.Config) fiber.Handler {
 			&user.StreamKey,
 		)
 		if err != nil {
-			return c.Status(http.StatusInternalServerError).JSON(fiber.Map{
+			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
 				"error": "Failed to get user",
 			})
 		}

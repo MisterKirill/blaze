@@ -100,7 +100,6 @@ func UpdateMeHandler(c *fiber.Ctx, db *sql.DB) error {
 		Bio         *string `json:"bio"`
 		DisplayName *string `json:"display_name"`
 		StreamName  *string `json:"stream_name"`
-		Password    *string `json:"password"`
 	}
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -148,31 +147,13 @@ func UpdateMeHandler(c *fiber.Ctx, db *sql.DB) error {
 		user.StreamName = body.StreamName
 	}
 
-	if body.Password != nil {
-		if len(*body.Password) < 8 {
-			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
-				"error": "Password must be at least 8 characters",
-			})
-		}
-
-		passwordHash, err := bcrypt.GenerateFromPassword([]byte(*body.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"error": "Failed to hash password",
-			})
-		}
-
-		user.Password = string(passwordHash)
-	}
-
 	var safeUser models.SafeUser
 	err := db.QueryRow(
-		"UPDATE users SET email = $1, bio = $2, display_name = $3, stream_name = $4, password = $5 WHERE id = $6 RETURNING username, bio, display_name, stream_name",
+		"UPDATE users SET email = $1, bio = $2, display_name = $3, stream_name = $4 WHERE id = $5 RETURNING username, bio, display_name, stream_name",
 		user.Email,
 		user.Bio,
 		user.DisplayName,
 		user.StreamName,
-		user.Password,
 		user.ID,
 	).Scan(&safeUser.Username, &safeUser.Bio, &safeUser.DisplayName, &safeUser.StreamName)
 	if err != nil {
@@ -243,6 +224,42 @@ func UnfollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to unfollow",
+		})
+	}
+
+	return c.SendStatus(fiber.StatusOK)
+}
+
+func UpdatePassword(c *fiber.Ctx, db *sql.DB) error {
+	user := c.Locals("user").(models.User)
+
+	var body struct {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Failed to parse body",
+		})
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.OldPassword)); err != nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "Invalid old password",
+		})
+	}
+
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(body.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to hash password",
+		})
+	}
+
+	_, err = db.Exec("UPDATE users SET password = $1 WHERE id = $2", passwordHash, user.ID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Failed to update password",
 		})
 	}
 
