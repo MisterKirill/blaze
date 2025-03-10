@@ -8,7 +8,7 @@ export interface User {
   stream_name: string | null;
 }
 
-export interface Me {
+export interface AuthenticatedUser {
   username: string;
   email: string;
   bio: string | null;
@@ -24,49 +24,75 @@ export interface Stream {
   user: User;
 }
 
-export async function signup(username: string, password: string, email: string) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-    method: "POST",
+interface RequestParams {
+  path: string;
+  params?: RequestInit;
+  authenticated?: boolean;
+}
+
+async function request<T>({ path, params, authenticated = false }: RequestParams): Promise<T> {
+  let token;
+  
+  if (authenticated) {
+    token = (await cookies()).get("token")?.value;
+
+    if (!token) {
+      redirect("/signin");
+    }
+  }
+
+  const res = await fetch(process.env.NEXT_PUBLIC_API_URL + path, {
     headers: {
       "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
-    body: JSON.stringify({ username, password, email }),
+    ...params,
   });
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error);
+  }
+
+  return res.json() as T;
 }
 
 export async function signin(email: string, password: string) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  return request<{ token: string }>({
+    path: "/auth/login",
+    params: {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
     },
-    body: JSON.stringify({ email, password }),
   });
 }
 
-export async function searchUsers(query: string) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users?query=${encodeURIComponent(query)}`);
+export async function signup(username: string, email: string, password: string) {
+  return request<{ token: string }>({
+    path: "/auth/register",
+    params: {
+      method: "POST",
+      body: JSON.stringify({ username, email, password }),
+    },
+  });
+}
+
+export async function searchUsers(username: string) {
+  return request<{ users: User[] }>({
+    path: `/users?query=${encodeURIComponent(username)}`,
+  });
 }
 
 export async function getUser(username: string) {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}`);
+  return request<User>({ path: `/users/${username}` });
 }
 
 export async function getActiveStreams() {
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/streams/active`);
+  return request<{ active_streams: Stream[] }>({ path: "/streams/active" });
 }
 
 export async function getMe() {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    redirect("/signin");
-  }
-
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
+  return request<AuthenticatedUser>({ path: "/users/me", authenticated: true });
 }
 
 export async function updateMe(
@@ -75,69 +101,39 @@ export async function updateMe(
   display_name?: string,
   stream_name?: string
 ) {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    redirect("/signin");
-  }
-
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+  return request<User>({
+    path: "/users/me",
+    params: {
+      method: "PATCH",
+      body: JSON.stringify({ email, bio, display_name, stream_name }),
     },
-    body: JSON.stringify({
-      email,
-      bio,
-      display_name,
-      stream_name,
-    }),
+    authenticated: true,
   });
 }
 
 export async function updatePassword(old_password: string, new_password: string) {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    redirect("/signin");
-  }
-
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/me/password`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+  return request({
+    path: "/users/me/password",
+    params: {
+      method: "PUT",
+      body: JSON.stringify({ old_password, new_password }),
     },
-    body: JSON.stringify({
-      old_password,
-      new_password,
-    }),
+    authenticated: true,
   });
 }
 
 export async function follow(username: string) {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    redirect("/signin");
-  }
-
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/follow`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  return request({
+    path: `/users/${username}/follow`,
+    params: { method: "POST" },
+    authenticated: true,
   });
 }
 
 export async function unfollow(username: string) {
-  const token = (await cookies()).get("token")?.value;
-  if (!token) {
-    redirect("/signin");
-  }
-
-  return fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${username}/unfollow`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  return request({
+    path: `/users/${username}/unfollow`,
+    params: { method: "POST" },
+    authenticated: true,
   });
 }

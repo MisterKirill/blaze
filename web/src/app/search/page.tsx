@@ -16,10 +16,17 @@ export default async function Search({
     return <span>No search query provided!</span>;
   }
 
-  const res = await searchUsers(query);
-  const { users } = (await res.json()) as { users: User[] };
+  let users: User[] = [];
+  let failed = false;
 
-  if (res.status !== 200) {
+  try {
+    const res = await searchUsers(query);
+    users = res.users;
+  } catch {
+    failed = true;
+  }
+
+  if (failed) {
     return <span>Failed to search users. Please, try again in a few seconds.</span>;
   }
 
@@ -28,10 +35,12 @@ export default async function Search({
       <h1 className="font-bold text-4xl mb-4">Search results – {query}</h1>
 
       <div className="flex items-start flex-wrap gap-4 mb-12">
-        {users.length == 0 ? (
+        {failed ? (
+          <span>Failed to search users. Please, try again in a few seconds.</span>
+        ) : users.length == 0 ? (
           <p>No users found!</p>
         ) : (
-          users.map((user) => <SearchUserCard key={user.username} user={user} />)
+          users.map((user, i) => <SearchUserCard key={i} user={user} />)
         )}
       </div>
     </>

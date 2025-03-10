@@ -1,9 +1,8 @@
 import Button from "@/components/ui/Button";
 import { Metadata } from "next";
 import { signOutAction } from "../actions";
-import { redirect } from "next/navigation";
 import StreamKey from "./StreamKey";
-import { getMe } from "@/lib/api";
+import { AuthenticatedUser, getMe } from "@/lib/api";
 import ProfileSettingsForm from "./ProfileSettingsForm";
 import PasswordForm from "./PasswordForm";
 
@@ -12,14 +11,18 @@ export const metadata: Metadata = {
 };
 
 export default async function Settings() {
-  const res = await getMe();
-  const me = await res.json();
+  let me!: AuthenticatedUser;
+  let failed = false;
 
-  if (res.status !== 200) {
-    redirect("/signin");
+  try {
+    me = await getMe();
+  } catch {
+    failed = true;
   }
 
-  return (
+  return failed ? (
+    <span>Failed to get data. Please, try again in a few seconds.</span>
+  ) : (
     <>
       <h2 className="mb-4 text-2xl font-bold">Stream Key</h2>
       <p className="font-bold bg-red-400 w-fit p-3 rounded-lg mb-6">
@@ -28,7 +31,7 @@ export default async function Settings() {
       <StreamKey streamKey={me.stream_key} />
 
       <h2 className="mb-4 text-2xl font-bold mt-8">Profile settings</h2>
-      <ProfileSettingsForm me={me} />
+      <ProfileSettingsForm user={me} />
 
       <h2 className="mb-4 text-2xl font-bold mt-8">Update password</h2>
       <PasswordForm />

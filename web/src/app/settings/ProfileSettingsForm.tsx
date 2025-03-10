@@ -4,13 +4,13 @@ import { useActionState } from "react";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import { updateProfileAction } from "@/app/actions";
-import { Me } from "@/lib/api";
+import { AuthenticatedUser } from "@/lib/api";
 
 const defaultState = {
-  error: "",
+  message: "",
 };
 
-export default function ProfileSettingsForm({ me }: { me: Me }) {
+export default function ProfileSettingsForm({ user }: { user: AuthenticatedUser }) {
   const [state, formAction, pending] = useActionState(updateProfileAction, defaultState);
 
   return (
@@ -23,7 +23,7 @@ export default function ProfileSettingsForm({ me }: { me: Me }) {
           type="text"
           name="stream_name"
           id="stream_name"
-          defaultValue={me.stream_name || ""}
+          defaultValue={user.stream_name || ""}
           placeholder="The name of your stream"
         />
       </div>
@@ -36,7 +36,7 @@ export default function ProfileSettingsForm({ me }: { me: Me }) {
           type="text"
           name="display_name"
           id="display_name"
-          defaultValue={me.display_name || ""}
+          defaultValue={user.display_name || ""}
           placeholder="Display name will be visible for everyone"
         />
       </div>
@@ -48,13 +48,13 @@ export default function ProfileSettingsForm({ me }: { me: Me }) {
         <textarea
           name="bio"
           id="bio"
-          defaultValue={me.bio || ""}
+          defaultValue={user.bio || ""}
           placeholder="Tell your followers who you are"
           className="px-4 py-3 font-medium text-sm bg-slate-800 rounded-lg w-full outline-hidden focus:ring-2 ring-blue-600"
         />
       </div>
 
-      {state.error && <p className="font-semibold text-sm mb-4 text-left">{state.error}</p>}
+      {state.message && <p className="font-semibold text-sm mb-4 text-left">{state.message}</p>}
 
       <Button type="submit" className="w-full" disabled={pending}>
         Submit

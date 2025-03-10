@@ -1,7 +1,7 @@
 import StreamCard from "@/components/StreamCard";
 import Button from "@/components/ui/Button";
+import { getActiveStreams } from "@/lib/api";
 import { getUsername } from "@/lib/auth";
-import { getActiveStreams, Stream } from "@/lib/api";
 import { Radio } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -13,12 +13,13 @@ export const metadata: Metadata = {
 export default async function Home() {
   const user = await getUsername();
 
-  const res = await getActiveStreams();
-  const { active_streams } = (await res.json()) as { active_streams: Stream[] };
-
   let failed = false;
+  let active_streams = [];
 
-  if (res.status !== 200) {
+  try {
+    const res = await getActiveStreams();
+    active_streams = res.active_streams;
+  } catch {
     failed = true;
   }
 
@@ -32,12 +33,10 @@ export default async function Home() {
       <div className="flex flex-wrap gap-4 mb-12">
         {failed ? (
           <p>Failed to load active streams, please try again in a few seconds.</p>
+        ) : active_streams.length == 0 ? (
+          <p>No one is streaming right now. Be the first!</p>
         ) : (
-          active_streams.length == 0 ? (
-            <p>No one is streaming right now. Be the first!</p>
-          ) : (
-            active_streams.map((stream, i) => <StreamCard key={i} stream={stream} />)
-          )
+          active_streams.map((stream: unknown, i: number) => <StreamCard key={i} stream={stream} />)
         )}
       </div>
 

@@ -6,7 +6,7 @@ import Input from "@/components/ui/Input";
 import { signUpAction } from "@/app/actions";
 
 const defaultState = {
-  error: "",
+  message: "",
 };
 
 export default function SignupForm() {
@@ -56,7 +56,7 @@ export default function SignupForm() {
         />
       </div>
 
-      {state.error && <p className="font-semibold text-sm mb-4 text-left">{state.error}</p>}
+      {state.message && <p className="font-semibold text-sm mb-4 text-left">{state.message}</p>}
 
       <Button type="submit" className="w-full" disabled={pending}>
         Submit

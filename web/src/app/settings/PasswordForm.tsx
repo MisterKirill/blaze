@@ -6,7 +6,7 @@ import Input from "@/components/ui/Input";
 import { updatePasswordAction } from "@/app/actions";
 
 const defaultState = {
-  error: "",
+  message: "",
 };
 
 export default function PasswordForm() {
@@ -53,7 +53,7 @@ export default function PasswordForm() {
         />
       </div>
 
-      {state.error && <p className="font-semibold text-sm mb-4 text-left">{state.error}</p>}
+      {state.message && <p className="font-semibold text-sm mb-4 text-left">{state.message}</p>}
 
       <Button type="submit" className="w-full" disabled={pending}>
         Submit
