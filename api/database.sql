@@ -13,9 +13,19 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS follows (
   id SERIAL PRIMARY KEY,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  follower_id INT,
-  follows_id INT,
+  follower_id INT NOT NULL,
+  following_id INT NOT NULL,
   FOREIGN KEY (follower_id) REFERENCES users(id) ON DELETE CASCADE,
-  FOREIGN KEY (follows_id) REFERENCES users(id) ON DELETE CASCADE,
-  UNIQUE (follower_id, follows_id)
+  FOREIGN KEY (following_id) REFERENCES users(id) ON DELETE CASCADE,
+  UNIQUE (follower_id, following_id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id SERIAL PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  streamer_id INT NOT NULL,
+  author_id INT NOT NULL,
+  body VARCHAR(1000) NOT NULL,
+  FOREIGN KEY (streamer_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE CASCADE
 );

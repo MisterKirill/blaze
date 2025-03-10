@@ -163,7 +163,16 @@ func UpdateMeHandler(c *fiber.Ctx, db *sql.DB) error {
 		})
 	}
 
-	return c.JSON(safeUser)
+	responseUser := models.AuthorizedUser{
+		Username:    user.Username,
+		Email:       user.Email,
+		Bio:         user.Bio,
+		DisplayName: user.DisplayName,
+		StreamName:  user.StreamName,
+		StreamKey:   fmt.Sprintf("%d?k=%s", user.ID, user.StreamKey),
+	}
+
+	return c.JSON(responseUser)
 }
 
 func FollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
@@ -188,7 +197,7 @@ func FollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
 		})
 	}
 
-	_, err = db.Exec("INSERT INTO follows (follower_id, follows_id) VALUES ($1, $2)", user.ID, targetID)
+	_, err = db.Exec("INSERT INTO follows (follower_id, following_id) VALUES ($1, $2)", user.ID, targetID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to follow",
@@ -220,7 +229,7 @@ func UnfollowUserHandler(c *fiber.Ctx, db *sql.DB) error {
 		})
 	}
 
-	_, err = db.Exec("DELETE FROM follows WHERE follower_id = $1 AND follows_id = $2", user.ID, targetID)
+	_, err = db.Exec("DELETE FROM follows WHERE follower_id = $1 AND following_id = $2", user.ID, targetID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Failed to unfollow",
